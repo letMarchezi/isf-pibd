@@ -7,6 +7,8 @@
   - Windows: https://docs.docker.com/desktop/install/windows-install/
   - Linux: https://docs.docker.com/desktop/install/linux-install/
 
+- Instale o docker compose seguindo a documentação https://docs.docker.com/compose/install/
+
 - Com os serviços instalados, no diretorio em que se encontra o arquivo `docker-compose.yml` rode o comando
 
   ```bash
