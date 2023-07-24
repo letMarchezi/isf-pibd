@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: postgresql
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ISF-Dev
+    ports:
+      - "5555:5432"
+    volumes:
+      - type: bind
+        source: ./data
+        target: /var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
