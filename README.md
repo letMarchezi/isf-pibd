@@ -17,3 +17,5 @@
 
 - Com isso, será criado um server do postgres com a base de dados ISF-Dev na porta `5555`, e um pgadmin na porta `5050`
 - O PgAdmin pode ser acessado em `localhost:5050` com o email `admin@admin.com` e senha padrão `root`
+  - Quando for conectar no server, no Hostname/Addres coloque o nome do container `postgresql` e a porta `5432`  
+  
