@@ -5,7 +5,7 @@
 - Instale o serviço do docker seguindo o script 
 
   ```
-    install_docker.sh
+  install_docker.sh
   ```
 - Com os serviços instalados, no diretorio em que se encontra o arquivo `docker-compose.yml` rode o comando
 
