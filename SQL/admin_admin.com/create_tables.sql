@@ -109,6 +109,28 @@ CREATE TABLE Edital_Curso_Especializacao(
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
+-- Componente Curricular
+
+CREATE TABLE ProficienciaIdiomaComponente(
+	Nome_idioma VARCHAR(50),
+	Proficiencia VARCHAR(10),
+	
+	PRIMARY KEY (Nome_idioma,Proficiencia)
+);
+
+CREATE TABLE ComponenteCurricular(
+	Nome_componente VARCHAR(100),
+	Nome_idioma VARCHAR(50),
+	Proficiencia VARCHAR(10),
+	Carga_horaria_pratica INT,
+	Carga_horaria_teorica INT,
+	Obrigatoriedade BOOLEAN,
+	Eixo_tematico VARCHAR(50),
+	
+	PRIMARY KEY (Nome_componente)
+);
+
+
 /*-------------- FK CONSTRAINTS ------------------ */
 
 --Gestor Constraints
@@ -158,3 +180,11 @@ FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital(Numero, Ano, Semestre);
 ALTER TABLE Idiomas_Edital_Oferta_Coletiva 
 ADD CONSTRAINT FK_Edital_Oferta_Coletiva  
 FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital_Oferta_Coletiva(Numero, Ano, Semestre);
+
+-- Componente Curricular Idioma
+ALTER TABLE ComponenteCurricular 
+ADD CONSTRAINT FK_IdiomaComponenteCurricular
+FOREIGN KEY (Nome_idioma,Proficiencia) REFERENCES ProficienciaIdiomaComponente(Nome_idioma,Proficiencia)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
