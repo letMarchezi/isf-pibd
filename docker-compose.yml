@@ -30,3 +30,6 @@ services:
     - type: bind
       source: ./servers.json
       target: /pgadmin4/servers.json
+    - type: bind
+      source: ./SQL
+      target: /var/lib/pgadmin/storage
