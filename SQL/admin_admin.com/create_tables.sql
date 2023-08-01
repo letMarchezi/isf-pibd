@@ -130,6 +130,23 @@ CREATE TABLE ComponenteCurricular(
 	PRIMARY KEY (Nome_componente)
 );
 
+-- Aluno Oferta Coletiva
+
+CREATE TABLE alunoOfertaColetiva(
+    CPF DECIMAL(11),
+    Vinculo_file VARCHAR(100),
+
+    PRIMARY KEY (CPF, Vinculo_file)
+);
+
+CREATE TABLE idiomaAlunoOfertaColetiva (
+	CPF DECIMAL(11),
+	Idioma VARCHAR(50),
+	Proficiencia VARCHAR(50),
+	Declaracao_proficiencia VARCHAR(100),
+	
+	PRIMARY KEY (CPF, Idioma, Proficiencia)
+);
 
 /*-------------- FK CONSTRAINTS ------------------ */
 
@@ -187,4 +204,17 @@ ADD CONSTRAINT FK_IdiomaComponenteCurricular
 FOREIGN KEY (Nome_idioma,Proficiencia) REFERENCES ProficienciaIdiomaComponente(Nome_idioma,Proficiencia)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+
+-- Aluno Oferta Coletiva
+-- ALTER TABLE alunoOfertaColetiva
+-- ADD CONSTRAINT FK_Usuario
+-- FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
+-- ON DELETE RESTRICT
+-- ON UPDATE CASCADE;
+
+-- ALTER TABLE idiomaAlunoOfertaColetiva
+-- ADD CONSTRAINT FK_Usuario
+-- FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
+-- ON DELETE RESTRICT
+-- ON UPDATE CASCADE;
 
