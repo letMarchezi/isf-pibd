@@ -249,8 +249,6 @@ FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital_Oferta_Coletiva(Numero, An
 ALTER TABLE ComponenteCurricular 
 ADD CONSTRAINT FK_IdiomaComponenteCurricular
 FOREIGN KEY (Nome_idioma,Proficiencia) REFERENCES ProficienciaIdiomaComponente(Nome_idioma,Proficiencia)
-ON DELETE CASCADE
-ON UPDATE CASCADE;
 
 -- Para EnderecoIES
 ALTER TABLE EnderecoIES
@@ -284,3 +282,5 @@ FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES coordenadorAdministrativo
 ALTER TABLE coordenadorAdministrativo
 ADD CONSTRAINT FK_coordenadorAdministrativo_usuario
 FOREIGN KEY (CPF_usuario) REFERENCES usuario(CPF);
+ON DELETE CASCADE
+ON UPDATE CASCADE;
