@@ -255,8 +255,23 @@ CREATE TABLE ComponenteCurricular(
 	PRIMARY KEY (Nome_componente)
 );
 
--- Aluno Oferta Coletiva
+-- Tipo Componente Curricular
+CREATE TABLE TipoComponenteCurricular(
+    Nome_Completo VARCHAR(100),
+    Tipo_Disciplina VARCHAR(50),
 
+    PRIMARY KEY (Nome_Completo)
+);
+
+-- Componente Curricular Material
+CREATE TABLE componenteCurricularMaterial(
+    Nome_componente VARCHAR(100),
+    Nome_material VARCHAR(100),   
+    data DATE,
+
+    PRIMARY KEY (Nome_componente, Nome_material, data)
+  
+-- Aluno Oferta Coletiva
 CREATE TABLE alunoOfertaColetiva(
     CPF DECIMAL(11),
     Vinculo_file VARCHAR(100),
@@ -485,6 +500,25 @@ FOREIGN KEY (CPF_usuario) REFERENCES usuario(CPF);
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
+-- Tipo Componente Curricular Constraint
+ALTER TABLE TipoComponenteCurricular 
+ADD CONSTRAINT FK_componenteCurricular
+FOREIGN KEY (Nome_completo) REFERENCES ComponenteCurricular(Nome_componente)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+-- Componente Curricular Material Constraints
+ALTER TABLE componenteCurricularMaterial 
+ADD CONSTRAINT FK_componenteCurricular
+FOREIGN KEY (Nome_componente) REFERENCES ComponenteCurricular(Nome_componente)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE componenteCurricularMaterial 
+ADD CONSTRAINT FK_material
+FOREIGN KEY (Nome_material, data) REFERENCES Material(Nome_material, data)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 -- Aluno Oferta Coletiva
 -- ALTER TABLE alunoOfertaColetiva
 -- ADD CONSTRAINT FK_Usuario
