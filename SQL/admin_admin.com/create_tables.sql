@@ -272,7 +272,7 @@ CREATE TABLE IES (
 
 -- Tabela EnderecoIES
 CREATE TABLE EnderecoIES (
-    CEP DECIMAL(8) PRIMARY KEY,
+    CEP DECIMAL(8),
     CNPJ VARCHAR(14),
     rua VARCHAR(100),
     numero VARCHAR(10),
@@ -280,7 +280,9 @@ CREATE TABLE EnderecoIES (
     bairro VARCHAR(50),
     cidade VARCHAR(50),
     estado VARCHAR(2),
-    pais VARCHAR(50)
+    pais VARCHAR(50),
+
+    PRIMARY KEY (CEP, numero)
 );
 
 -- Tabela telefoneIES
