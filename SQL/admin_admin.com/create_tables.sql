@@ -255,6 +255,70 @@ CREATE TABLE ComponenteCurricular(
 	PRIMARY KEY (Nome_componente)
 );
 
+-- Tabela IES
+CREATE TABLE IES (
+    CNPJ VARCHAR(14) PRIMARY KEY,
+    sigla VARCHAR(10),
+    participou_isf BOOLEAN,
+    tem_lab_mais_unidos BOOLEAN,
+    possui_nucleo_ativo BOOLEAN,
+    CEP DECIMAL(8),
+    link_politica_ling VARCHAR(255),
+    data_politica_ling DATE,
+    doc_politica_ling VARCHAR(255),
+    campus VARCHAR(100),
+    nome_principal VARCHAR(100)
+);
+
+-- Tabela EnderecoIES
+CREATE TABLE EnderecoIES (
+    CEP DECIMAL(8) PRIMARY KEY,
+    CNPJ VARCHAR(14),
+    rua VARCHAR(100),
+    numero VARCHAR(10),
+    complemento VARCHAR(50),
+    bairro VARCHAR(50),
+    cidade VARCHAR(50),
+    estado VARCHAR(2),
+    pais VARCHAR(50)
+);
+
+-- Tabela telefoneIES
+CREATE TABLE telefoneIES (
+    CNPJ_IES DECIMAL(14),
+    DDD VARCHAR(3),
+    DDI VARCHAR(3),
+    numero VARCHAR(15),
+
+    PRIMARY KEY (CNPJ_IES, DDI, DDD, numero)
+);
+
+-- Tabela gestorAprovaCoordAdm
+CREATE TABLE gestorAprovaCoordAdm (
+    CPF_gestorRedeAndifes VARCHAR(11),
+    CPF_coordenadorAdministrativo VARCHAR(11),
+    data_fim DATE,
+    data_inicio DATE,
+    documento_de_atuacao VARCHAR(255),
+    PRIMARY KEY (CPF_gestorRedeAndifes, CPF_coordenadorAdministrativo)
+);
+
+-- Tabela coordAdmCadastraIES
+CREATE TABLE coordAdmCadastraIES (
+    CNPJ_IES VARCHAR(14),
+    CPF_coordenadorAdministrativo VARCHAR(11),
+    termo_de_compromisso VARCHAR(255),
+    PRIMARY KEY (CNPJ_IES, CPF_coordenadorAdministrativo)
+);
+
+-- Tabela coordenadorAdministrativo
+CREATE TABLE coordenadorAdministrativo (
+    CPF_usuario VARCHAR(11) PRIMARY KEY,
+    funcao_na_instituicao VARCHAR(100),
+    curriculo_lates VARCHAR(255),
+    data_cadastro DATE,
+    POCA VARCHAR(50)
+);
 
 /*-------------- FK CONSTRAINTS ------------------ */
 
@@ -366,6 +430,38 @@ FOREIGN KEY (Nome_Idioma, Proficiencia_Turma, Nome_Completo_Idioma, Sigla_Turma,
 ALTER TABLE ComponenteCurricular 
 ADD CONSTRAINT FK_IdiomaComponenteCurricular
 FOREIGN KEY (Nome_idioma,Proficiencia) REFERENCES ProficienciaIdiomaComponente(Nome_idioma,Proficiencia)
+
+-- Para EnderecoIES
+ALTER TABLE EnderecoIES
+ADD CONSTRAINT FK_EnderecoIES_IES
+FOREIGN KEY (CEP) REFERENCES IES(CEP);
+
+-- Para telefoneIES
+ALTER TABLE telefoneIES
+ADD CONSTRAINT FK_telefoneIES_IES
+FOREIGN KEY (CNPJ_IES) REFERENCES IES(CNPJ);
+
+-- Para gestorAprovaCoordAdm
+ALTER TABLE gestorAprovaCoordAdm
+ADD CONSTRAINT FK_gestorAprovaCoordAdm_gestorRedeAndifes
+FOREIGN KEY (CPF_gestorRedeAndifes) REFERENCES gestorRedeAndifes(CPF);
+
+ALTER TABLE gestorAprovaCoordAdm
+ADD CONSTRAINT FK_gestorAprovaCoordAdm_coordenadorAdministrativo
+FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES coordenadorAdministrativo(CPF_usuario);
+
+-- Para coordAdmCadastraIES
+ALTER TABLE coordAdmCadastraIES
+ADD CONSTRAINT FK_coordAdmCadastraIES_IES
+FOREIGN KEY (CNPJ_IES) REFERENCES IES(CNPJ);
+
+ALTER TABLE coordAdmCadastraIES
+ADD CONSTRAINT FK_coordAdmCadastraIES_coordenadorAdministrativo
+FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES coordenadorAdministrativo(CPF_usuario);
+
+-- Para coordenadorAdministrativo
+ALTER TABLE coordenadorAdministrativo
+ADD CONSTRAINT FK_coordenadorAdministrativo_usuario
+FOREIGN KEY (CPF_usuario) REFERENCES usuario(CPF);
 ON DELETE CASCADE
 ON UPDATE CASCADE;
-
