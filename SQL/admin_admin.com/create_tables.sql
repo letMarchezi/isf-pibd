@@ -157,8 +157,7 @@ CREATE TABLE EnderecoIES (
     estado VARCHAR(2),
     pais VARCHAR(50),
 
-    PRIMARY KEY (CEP, numero),
-    SECONDARY KEY (complemento)
+    PRIMARY KEY (CEP, numero)
 );
 
 -- Tabela telefoneIES
