@@ -472,6 +472,74 @@ CREATE TABLE IF NOT EXISTS Coordenador_Administrativo (
     POCA VARCHAR(50)
 );
 
+-- DROP TABLE IF EXISTS Docente_Especialista;
+
+CREATE TABLE IF NOT EXISTS Docente_Especialista(
+    CPF_docente VARCHAR(11) UNIQUE NOT NULL,
+    data_credenciamento DATE,
+    curriculo VARCHAR(256),
+    titulacao VARCHAR(16),
+    poca_file VARCHAR(255),
+    vinculo_file VARCHAR(255),
+    link_cnpq VARCHAR(255),
+
+    is_orientador BOOLEAN,
+    is_autor BOOLEAN,
+    is_ministrante BOOLEAN,
+    is_coordenador_pedagogico BOOLEAN,
+
+    CHECK((is_orientador IS true) OR 
+          (is_autor IS true) OR
+          (is_ministrante IS true) OR 
+          (is_coordenador_pedagogico IS true)),
+
+    PRIMARY KEY(CPF_Docente)
+);
+
+-- DROP TABLE IF EXISTS Docente_Autor_Produz_Material;
+
+CREATE TABLE IF NOT EXISTS Docente_Autor_Produz_Material(
+    FK_CPF_docente VARCHAR(11) NOT NULL,
+    FK_nome VARCHAR(128) NOT NULL,
+    FK_data_producao DATE NOT NULL,
+
+    PRIMARY KEY (FK_CPF_Docente, FK_nome, FK_data_producao)
+);
+
+-- DROP TABLE IF EXISTS Horarios_Disponiveis_Docente_Ministrante;
+
+CREATE TABLE IF NOT EXISTS Horarios_Disponiveis_Docente_Ministrante(
+    FK_CPF_docente VARCHAR(11) NOT NULL,
+    horario_disponivel INTEGER NOT NULL, -- Não sei que tipo de variável isso seria
+
+    PRIMARY KEY (FK_CPF_Docente, horario_disponivel)
+);
+
+-- DROP TABLE IF EXISTS Docente_Orientador_Orienta_ProfessorISF;
+
+CREATE TABLE IF NOT EXISTS Docente_Orientador_Orienta_ProfessorISF(
+    FK_CPF_docente VARCHAR(11) NOT NULL,
+    FK_CPF_professorIsf VARCHAR(11) NOT NULL,
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP,
+
+    PRIMARY KEY (FK_CPF_Docente, FK_CPF_professorIsf, data_inicio)
+);
+
+-- DROP TABLE IF EXISTS Curso_Idioma;
+
+CREATE TABLE Curso_Idioma(
+    nome_completo VARCHAR(256) NOT NULL,
+    idioma VARCHAR(16) NOT NULL,
+    nivel VARCHAR(16),
+    categoria VARCHAR(16),
+    carga_horaria SMALLINT,
+    link_ementa VARCHAR(256),
+
+    PRIMARY KEY (nome_completo, idioma)
+);
+
+
 /*-------------- FK CONSTRAINTS ------------------ */
 
 --Gestor Constraints
@@ -683,4 +751,43 @@ ALTER TABLE Aluno_Inscreve_Turma_Oferta
 ADD CONSTRAINT FK_Turma_Oferta_Coletiva
 FOREIGN KEY (Idioma, Nome_Completo, Sigla_Turma, Semestre) REFERENCES Turma_Oferta_Coletiva(Idioma, Nome_Completo, Sigla_Turma, Semestre)
 ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+-- Docente Especialista 
+
+ALTER TABLE Docente_Especialista 
+ADD CONSTRAINT FK_Usuario
+FOREIGN KEY (CPF_Docente) REFERENCES Usuario(CPF)
+ON UPDATE CASCADE;
+
+-- Docente Ministrante 
+
+ALTER TABLE Horarios_Disponiveis_Docente_Ministrante
+ADD CONSTRAINT FK_CPF_Docente 
+FOREIGN KEY (FK_CPF_Docente) REFERENCES Docente_Especialista(CPF_Docente)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- Docente Autor
+
+ALTER TABLE Docente_Autor_Produz_Material 
+ADD CONSTRAINT FK_Docente
+FOREIGN KEY (FK_CPF_Docente) REFERENCES Docente_Especialista(CPF_Docente)
+ON UPDATE CASCADE;
+
+ALTER TABLE Docente_Autor_Produz_Material 
+ADD CONSTRAINT FK_nome_material
+FOREIGN KEY (FK_nome, fk_data_producao) REFERENCES Material(nome, data_producao)
+ON UPDATE CASCADE;
+
+-- Docente Orientador
+
+ALTER TABLE Docente_Orientador_Orienta_ProfessorISF
+ADD CONSTRAINT FK_CPF_Docente 
+FOREIGN KEY (FK_CPF_docente) REFERENCES Docente_Especialista(CPF_Docente)
+ON UPDATE CASCADE;
+
+ALTER TABLE Docente_Orientador_Orienta_ProfessorISF
+ADD CONSTRAINT FK_CPF_ProfessorIsf
+FOREIGN KEY (FK_CPF_professorIsf) REFERENCES ProfessorISF(CPF_professorIsf)
 ON UPDATE CASCADE;
