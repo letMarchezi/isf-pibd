@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
 
 -- DROP TABLE IF EXISTS GESTOR;
 
-CREATE TABLE IF NOT EXISTS Gestor (
+CREATE TABLE IF NOT EXISTS Gestor_Redes_Andifes (
     CPF VARCHAR(11) NOT NULL PRIMARY KEY,
     Data_Cadastro DATE
 );
@@ -337,13 +337,19 @@ CREATE TABLE IF NOT EXISTS Dias_Turma_Oferta_Coletiva(
 CREATE TABLE IF NOT EXISTS Componente_Curricular(
   Nome_componente VARCHAR(100) NOT NULL,
   Nome_idioma VARCHAR(50),
-  Proficiencia VARCHAR(10),
   Carga_horaria_pratica TIME,
   Carga_horaria_teorica TIME,
   Obrigatoriedade BOOLEAN,
   Eixo_tematico VARCHAR(50),
   
   PRIMARY KEY (Nome_componente)
+);
+
+CREATE TABLE IF NOT EXISTS Proficiencia_Idioma_Componente(
+  Nome_idioma VARCHAR(50),
+  Proficiencia VARCHAR(10),
+
+  PRIMARY KEY (Nome_idioma)
 );
 
 -- DROP TABLE IF EXISTS Tipo_Componente_Curricular;
@@ -380,12 +386,12 @@ CREATE TABLE IF NOT EXISTS ProfessorIsF(
 -- DROP TABLE IF EXISTS ProfessorIsf_Idioma
 
 CREATE TABLE IF NOT EXISTS ProfessorIsf_Idioma(
-    CPF_ProfessorIsF VARCHAR(11),
+    CPF_Professor_IsF VARCHAR(11),
     Idioma VARCHAR(30),
     Proficiencia VARCHAR(5),
     Declaracao_proficiencia VARCHAR(256),
 
-    PRIMARY KEY(CPF_ProfessorIsF, Idioma)
+    PRIMARY KEY(CPF_Professor_IsF, Idioma)
 );
 
 -- DROP TABLE IF EXISTS ProfessorIsfMinistraTurma
@@ -458,7 +464,7 @@ CREATE TABLE IF NOT EXISTS Idioma_Aluno_Oferta_Coletiva (
 CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
     CPF_Aluno VARCHAR(11) NOT NULL,
     Idioma VARCHAR(20) NOT NULL,
-    Nome_turma VARCHAR(20) NOT NULL,
+    Nome_Curso VARCHAR(20) NOT NULL,
     Sigla_Turma VARCHAR(10) NOT NULL,
     Semestre DECIMAL(1) NOT NULL,
 
@@ -469,7 +475,7 @@ CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
     Data_Matricula TIMESTAMP,
     Situacao_matricula VARCHAR(15),
 
-    PRIMARY KEY (CPF_Aluno, Nome_turma, Idioma, Sigla_Turma, Semestre)
+    PRIMARY KEY (CPF_Aluno, Nome_Curso, Idioma, Sigla_Turma, Semestre)
 );
 -------------------------------------------
 
@@ -650,17 +656,16 @@ ON UPDATE CASCADE;
 
 
 /*-------------- FK CONSTRAINTS dos outros grupos ------------------ */
--- REVISAR DAQUI PRA BAIXO!!
 
 --Gestor Constraints
 
-ALTER TABLE Gestor 
+ALTER TABLE Gestor_Redes_Andifes 
 ADD CONSTRAINT FK_Usuario
 FOREIGN KEY (CPF) REFERENCES Usuario(CPF);
 
 ALTER TABLE Gestor_Analisa_Parceiro 
 ADD CONSTRAINT FK_Gestor
-FOREIGN KEY (CPF_Gestor) REFERENCES Gestor(CPF);
+FOREIGN KEY (CPF_Gestor) REFERENCES Gestor_Redes_Andifes(CPF);
 
 ALTER TABLE Gestor_Analisa_Parceiro 
 ADD CONSTRAINT FK_Parceiro  
@@ -669,9 +674,9 @@ FOREIGN KEY (CNPJ_Parceiro) REFERENCES Parceiro(CNPJ);
 
 --Parceiro Constraints
 
-ALTER TABLE EnderecoParceiro 
+ALTER TABLE Parceiro  
 ADD CONSTRAINT FK_Parceiro  
-FOREIGN KEY (CEP) REFERENCES Parceiro(CEP);
+FOREIGN KEY (CEP) REFERENCES Endereco_Parceiro(CEP);
 
 ALTER TABLE Telefone_Parceiro 
 ADD CONSTRAINT FK_Parceiro  
@@ -692,7 +697,7 @@ ALTER TABLE Edital_Cred_Prof_Isf
 ADD CONSTRAINT FK_Edital  
 FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital(Numero, Ano, Semestre);
 
-ALTER TABLE Edital_Curso_Especializacao 
+ALTER TABLE Edital_Aluno_Especializacao 
 ADD CONSTRAINT FK_Edital  
 FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital(Numero, Ano, Semestre);
 
@@ -700,24 +705,20 @@ ALTER TABLE Idiomas_Edital_Oferta_Coletiva
 ADD CONSTRAINT FK_Edital_Oferta_Coletiva  
 FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital_Oferta_Coletiva(Numero, Ano, Semestre);
 
-ALTER TABLE Edital_Aluno_Especializacao
-ADD CONSTRAINT FK_Edital
-FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital(Numero, Ano, Semestre);
-
 ALTER TABLE Edital_Admite_Docente_Especialista
 ADD CONSTRAINT FK_Edital
 FOREIGN KEY (Numero, Ano, Semestre) REFERENCES Edital(Numero, Ano, Semestre);
 
 ALTER TABLE Edital_Admite_Docente_Especialista
 ADD CONSTRAINT FK_Docente_Especialista
-FOREIGN KEY () REFERENCES Edital(Numero, Ano, Semestre);
+FOREIGN KEY (Numero,Ano,Semestre) REFERENCES Edital(Numero, Ano, Semestre);
 
 --Aluno Especializacao Constraints
 
 -- Removido daqui e adicionado em baixo de professor isf
---ALTER TABLE Aluno_Especializacao
---ADD CONSTRAINT FK_Professor_Isf
---FOREIGN KEY (CPF_Docente_Especialista) REFERENCES Docente_Especialista(CPF);
+ALTER TABLE Aluno_Especializacao
+ADD CONSTRAINT FK_Professor_Isf
+FOREIGN KEY (CPF) REFERENCES ProfessorIsF(CPF_usuario);
 
 ALTER TABLE Aluno_Especializacao_Produz_Repositorio
 ADD CONSTRAINT FK_Aluno_Especializacao
@@ -756,7 +757,7 @@ ON UPDATE RESTRICT;
 -- Repositorios
 ALTER TABLE Repositorio_Turma
 ADD CONSTRAINT FK_Turma_Ofertada
-FOREIGN KEY (Nome_Turma_Ofertada, Idioma_Turma_Ofertada, Sigla_Turma_Ofertada, Semestre_Turma_Ofertada) REFERENCES Turma_Ofertada (Nome_Completo, Idioma, Sigla_Turma, Semestre);
+FOREIGN KEY (Nome_Turma_Ofertada, Idioma_Turma_Ofertada, Sigla_Turma_Ofertada, Semestre_Turma_Ofertada) REFERENCES Turma_Oferta_Coletiva (Nome_Completo, Idioma, Sigla_Turma, Semestre);
 
 ALTER TABLE Repositorio_Turma
 ADD CONSTRAINT FK_Repositorio
@@ -776,63 +777,64 @@ ON DELETE RESTRICT
 ON UPDATE RESTRICT;
 
 -- Componente Curricular Idioma
-ALTER TABLE ComponenteCurricular 
+ALTER TABLE Componente_Curricular 
 ADD CONSTRAINT FK_IdiomaComponenteCurricular
-FOREIGN KEY (Nome_idioma,Proficiencia) REFERENCES ProficienciaIdiomaComponente(Nome_idioma,Proficiencia)
+FOREIGN KEY (Nome_idioma) REFERENCES Proficiencia_Idioma_Componente(Nome_idioma);
 
 -- Para EnderecoIES
-ALTER TABLE EnderecoIES
+/*
+ALTER TABLE IES
 ADD CONSTRAINT FK_EnderecoIES_IES
-FOREIGN KEY (CEP) REFERENCES IES(CEP);
-
+FOREIGN KEY (CEP) REFERENCES Endereco_IES(CEP);
+*/
 -- Para telefoneIES
-ALTER TABLE telefoneIES
+ALTER TABLE Telefone_IES
 ADD CONSTRAINT FK_telefoneIES_IES
 FOREIGN KEY (CNPJ_IES) REFERENCES IES(CNPJ);
 
 -- Para gestorAprovaCoordAdm
-ALTER TABLE gestorAprovaCoordAdm
+ALTER TABLE Gestor_Aprova_Coord_Adm
 ADD CONSTRAINT FK_gestorAprovaCoordAdm_gestorRedeAndifes
-FOREIGN KEY (CPF_gestorRedeAndifes) REFERENCES gestorRedeAndifes(CPF);
+FOREIGN KEY (CPF_gestorRedeAndifes) REFERENCES Gestor_Redes_Andifes(CPF);
 
-ALTER TABLE gestorAprovaCoordAdm
+ALTER TABLE Gestor_Aprova_Coord_Adm
 ADD CONSTRAINT FK_gestorAprovaCoordAdm_coordenadorAdministrativo
-FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES coordenadorAdministrativo(CPF_usuario);
+FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES Coordenador_Administrativo(CPF_usuario);
 
 -- Para coordAdmCadastraIES
-ALTER TABLE coordAdmCadastraIES
+ALTER TABLE Coord_Adm_Cadastra_IES
 ADD CONSTRAINT FK_coordAdmCadastraIES_IES
 FOREIGN KEY (CNPJ_IES) REFERENCES IES(CNPJ);
 
-ALTER TABLE coordAdmCadastraIES
+ALTER TABLE Coord_Adm_Cadastra_IES
 ADD CONSTRAINT FK_coordAdmCadastraIES_coordenadorAdministrativo
-FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES coordenadorAdministrativo(CPF_usuario);
+FOREIGN KEY (CPF_coordenadorAdministrativo) REFERENCES Coordenador_Administrativo(CPF_usuario);
 
 -- Para coordenadorAdministrativo
-ALTER TABLE coordenadorAdministrativo
+ALTER TABLE Coordenador_Administrativo
 ADD CONSTRAINT FK_coordenadorAdministrativo_usuario
-FOREIGN KEY (CPF_usuario) REFERENCES usuario(CPF);
+FOREIGN KEY (CPF_usuario) REFERENCES usuario(CPF)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 -- Tipo Componente Curricular Constraint
-ALTER TABLE TipoComponenteCurricular 
+ALTER TABLE Tipo_Componente_Curricular 
 ADD CONSTRAINT FK_componenteCurricular
-FOREIGN KEY (Nome_completo) REFERENCES ComponenteCurricular(Nome_componente)
+FOREIGN KEY (Nome_completo) REFERENCES Componente_Curricular(Nome_componente)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 -- Componente Curricular Material Constraints
-ALTER TABLE componenteCurricularMaterial 
+ALTER TABLE Componente_Curricular_Material 
 ADD CONSTRAINT FK_componenteCurricular
-FOREIGN KEY (Nome_componente) REFERENCES ComponenteCurricular(Nome_componente)
+FOREIGN KEY (Nome_componente) REFERENCES Componente_Curricular(Nome_componente)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
-ALTER TABLE componenteCurricularMaterial 
+ALTER TABLE Componente_Curricular_Material 
 ADD CONSTRAINT FK_material
-FOREIGN KEY (Nome_material, data) REFERENCES Material(Nome_material, data)
-ON DELETE CASCADE,
+FOREIGN KEY (Nome_material, Data_Material) REFERENCES Material(Nome, Data_criacao)
+ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 -- Professor isf constraints
@@ -856,7 +858,7 @@ ON UPDATE CASCADE;
 
 ALTER TABLE ProfessorIsf_Ministra_Turma
 ADD CONSTRAINT FK_Turma_Oferta_Coletiva_Ministra
-FOREIGN KEY (Nome_completo_componente, Idioma_turma, Sigla_turma, semestre) REFERENCES Turma_Oferta_Coletiva(Nome_Completo, Idioma, Sigla_Turma, Semestre)
+FOREIGN KEY (Nome_curso, Idioma_turma, Sigla_turma, semestre) REFERENCES Turma_Oferta_Coletiva(Nome_Completo, Idioma, Sigla_Turma, Semestre)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
@@ -870,7 +872,7 @@ ON UPDATE CASCADE;
 
 ALTER TABLE Edital_Admite_Aluno_Graduacao
 ADD CONSTRAINT FK_Edital_Admite_Aluno_Graduacao_Aluno
-FOREIGN KEY (CPF_aluno) REFERENCES AlunoGraduacao(CPF_Aluno_Graduacao)
+FOREIGN KEY (CPF_aluno) REFERENCES Aluno_Graduacao(CPF_Aluno_Graduacao)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 --!!! TODO adicionar constraint da foreign key de edital no tabela adimite
@@ -894,7 +896,7 @@ ON UPDATE CASCADE;
 -- Aluno especializacao com relacao à professor isf
 ALTER TABLE Aluno_Especializacao
 ADD CONSTRAINT FK_Professor_Isf_Aluno_Especializacao
-FOREIGN KEY (CPF_Docente_Especialista) REFERENCES ProfessorIsf(CPF_usuario);
+FOREIGN KEY (CPF) REFERENCES ProfessorIsf(CPF_usuario);
 
 --ALTER TABLE Aluno_Inscreve_Turma_Oferta DROP CONSTRAINT IF EXISTS FK_Aluno_Oferta_Coletiva;
 
@@ -908,6 +910,6 @@ ON UPDATE CASCADE;
 
 ALTER TABLE Aluno_Inscreve_Turma_Oferta
 ADD CONSTRAINT FK_Turma_Oferta_Coletiva
-FOREIGN KEY (Idioma, Nome_Completo, Sigla_Turma, Semestre) REFERENCES Turma_Oferta_Coletiva(Idioma, Nome_Completo, Sigla_Turma, Semestre)
+FOREIGN KEY (Idioma, Nome_Curso, Sigla_Turma, Semestre) REFERENCES Turma_Oferta_Coletiva(Idioma, Nome_Completo, Sigla_Turma, Semestre)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
