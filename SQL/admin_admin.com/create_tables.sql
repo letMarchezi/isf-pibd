@@ -1,11 +1,15 @@
-
 /*-------------- Tabelas ------------------ */
 
 /* GESTOR */
+
+-- DROP TABLE IF EXISTS GESTOR;
+
 CREATE TABLE IF NOT EXISTS Gestor (
     CPF VARCHAR(11) NOT NULL PRIMARY KEY,
     Data_Cadastro DATE
 );
+
+-- DROP TABLE IF EXISTS Gestor_Analisa_Parceiro;
 
 CREATE TABLE IF NOT EXISTS Gestor_Analisa_Parceiro(
     CPF_Gestor VARCHAR(11) NOT NULL,
@@ -15,6 +19,8 @@ CREATE TABLE IF NOT EXISTS Gestor_Analisa_Parceiro(
 
     PRIMARY KEY (CPF_Gestor, CNPJ_Parceiro)
 );
+
+-- DROP TABLE IF EXISTS Gestor_Aprova_Coord_Adm;
 
 CREATE TABLE IF NOT EXISTS Gestor_Aprova_Coord_Adm (
     CPF_gestorRedeAndifes VARCHAR(11) NOT NULL,
@@ -31,6 +37,7 @@ CREATE TABLE IF NOT EXISTS Gestor_Aprova_Coord_Adm (
 -------------------------------------------
 
 /* PARCEIRO */ 
+-- DROP TABLE IF EXISTS Parceiro;
 
 CREATE TABLE IF NOT EXISTS Parceiro(
   CNPJ VARCHAR(14) NOT NULL PRIMARY KEY,
@@ -41,6 +48,8 @@ CREATE TABLE IF NOT EXISTS Parceiro(
   Complemento VARCHAR(100)
 );
 
+-- DROP TABLE IF EXISTS Endereco_Parceiro;
+
 CREATE TABLE IF NOT EXISTS Endereco_Parceiro(
   CEP DECIMAL(8) NOT NULL PRIMARY KEY,
   Rua VARCHAR(100) NOT NULL,
@@ -50,6 +59,8 @@ CREATE TABLE IF NOT EXISTS Endereco_Parceiro(
   Estado VARCHAR(100) NOT NULL,
   Pais VARCHAR(100) NOT NULL
 );
+
+-- DROP TABLE IF EXISTS Telefone_Parceiro;
 
 CREATE TABLE IF NOT EXISTS Telefone_Parceiro(
     CNPJ_Parceiro VARCHAR(14) NOT NULL,
@@ -63,6 +74,7 @@ CREATE TABLE IF NOT EXISTS Telefone_Parceiro(
 -------------------------------------------
 
 /* EDITAL */
+-- DROP TABLE IF EXISTS Edital;
 
 CREATE TABLE IF NOT EXISTS Edital(
     Numero DECIMAL(30) NOT NULL,
@@ -79,6 +91,8 @@ CREATE TABLE IF NOT EXISTS Edital(
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
+-- DROP TABLE IF EXISTS Edital_Oferta_Coletiva;
+
 CREATE TABLE IF NOT EXISTS Edital_Oferta_Coletiva(
     Numero DECIMAL(30) NOT NULL,
     Ano DECIMAL(4) NOT NULL,
@@ -90,6 +104,8 @@ CREATE TABLE IF NOT EXISTS Edital_Oferta_Coletiva(
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
+-- DROP TABLE IF EXISTS Idiomas_Edital_Oferta_Coletiva;
+
 CREATE TABLE IF NOT EXISTS Idiomas_Edital_Oferta_Coletiva(
     Numero DECIMAL(30) NOT NULL,
     Ano DECIMAL(4) NOT NULL,
@@ -99,6 +115,8 @@ CREATE TABLE IF NOT EXISTS Idiomas_Edital_Oferta_Coletiva(
     PRIMARY KEY (Numero, Ano, Semestre, Idioma)
 );
 
+-- DROP TABLE IF EXISTS Edital_Cred_Especialista;
+
 CREATE TABLE IF NOT EXISTS Edital_Cred_Especialista(
     Numero DECIMAL(30) NOT NULL,
     Ano DECIMAL(4) NOT NULL,
@@ -106,6 +124,8 @@ CREATE TABLE IF NOT EXISTS Edital_Cred_Especialista(
 
     PRIMARY KEY (Numero, Ano, Semestre)
 );
+
+-- DROP TABLE IF EXISTS Edital_Admite_Docente_Especialista;
 
 CREATE TABLE IF NOT EXISTS Edital_Admite_Docente_Especialista(
     Numero DECIMAL(30) NOT NULL,
@@ -116,6 +136,8 @@ CREATE TABLE IF NOT EXISTS Edital_Admite_Docente_Especialista(
     PRIMARY KEY (Numero, Ano, Semestre, CPF_Docente_Especialista)
 );
 
+-- DROP TABLE IF EXISTS Edital_Cred_Prof_Isf;
+
 CREATE TABLE IF NOT EXISTS Edital_Cred_Prof_Isf(
     Numero DECIMAL(30) NOT NULL,
     Ano DECIMAL(4) NOT NULL,
@@ -123,6 +145,8 @@ CREATE TABLE IF NOT EXISTS Edital_Cred_Prof_Isf(
 
     PRIMARY KEY (Numero, Ano, Semestre)
 );
+
+-- DROP TABLE IF EXISTS Edital_Aluno_Especializacao;
 
 CREATE TABLE IF NOT EXISTS Edital_Aluno_Especializacao(
     Numero DECIMAL(30) NOT NULL,
@@ -136,6 +160,7 @@ CREATE TABLE IF NOT EXISTS Edital_Aluno_Especializacao(
 -------------------------------------------
 
 /* ALUNO ESPECIALIZACAO */
+-- DROP TABLE IF EXISTS Aluno_Especializacao;
 
 CREATE TABLE IF NOT EXISTS Aluno_Especializacao(
     CPF VARCHAR(11) NOT NULL, 
@@ -148,6 +173,8 @@ CREATE TABLE IF NOT EXISTS Aluno_Especializacao(
     PRIMARY KEY (CPF)
 );
 
+-- DROP TABLE IF EXISTS Aluno_Especializacao_Produz_Repositorio;
+
 CREATE TABLE IF NOT EXISTS Aluno_Especializacao_Produz_Repositorio(
     CPF_Aluno_Especializacao VARCHAR(11) NOT NULL,
     Repositorio_Titulo VARCHAR(20) NOT NULL,
@@ -155,6 +182,8 @@ CREATE TABLE IF NOT EXISTS Aluno_Especializacao_Produz_Repositorio(
     
     PRIMARY KEY (CPF_Aluno_Especializacao, Repositorio_Titulo)
 );
+
+-- DROP TABLE IF EXISTS Aluno_Especializacao_Cursa_Turma;
 
 CREATE TABLE IF NOT EXISTS Aluno_Especializacao_Cursa_Turma(
     CPF_Aluno VARCHAR(11) NOT NULL,
@@ -168,6 +197,8 @@ CREATE TABLE IF NOT EXISTS Aluno_Especializacao_Cursa_Turma(
 
     PRIMARY KEY (CPF_Aluno, Nome_Componente, Sigla, Semestre)
 );
+
+-- DROP TABLE IF EXISTS Atividades_Aluno_Especializacao;
 
 CREATE TABLE IF NOT EXISTS Atividades_Aluno_Especializacao(
     CPF_Aluno VARCHAR(11) NOT NULL,
@@ -186,6 +217,9 @@ CREATE TABLE IF NOT EXISTS Atividades_Aluno_Especializacao(
 
 -------------------------------------------
 /* TURMA ESPECIALIZACAO */
+
+-- DROP TABLE IF EXISTS Turma_Especializacao;
+
 CREATE TABLE IF NOT EXISTS Turma_Especializacao(
     Nome_Componente VARCHAR(100) NOT NULL,
     Sigla VARCHAR(15) NOT NULL,
@@ -200,6 +234,8 @@ CREATE TABLE IF NOT EXISTS Turma_Especializacao(
     PRIMARY KEY(Nome_Componente, Sigla, Semestre)
 );
 
+-- DROP TABLE IF EXISTS Dias_Turma_Especializacao;
+
 CREATE TABLE IF NOT EXISTS Dias_Turma_Especializacao(
     Dia_Da_Semana VARCHAR(3) NOT NULL,
     Nome_Componente VARCHAR(100) NOT NULL,
@@ -212,6 +248,8 @@ CREATE TABLE IF NOT EXISTS Dias_Turma_Especializacao(
 
 /* REPOSITORIO */
 
+-- DROP TABLE IF EXISTS Repositorio;
+
 CREATE TABLE IF NOT EXISTS Repositorio(
     Titulo VARCHAR(20) NOT NULL,
     Link VARCHAR(50) NOT NULL,
@@ -219,6 +257,8 @@ CREATE TABLE IF NOT EXISTS Repositorio(
 
     PRIMARY KEY (Titulo)
 );
+
+-- DROP TABLE IF EXISTS Repositorio_Turma;
 
 CREATE TABLE IF NOT EXISTS Repositorio_Turma(
     Nome_Turma_Ofertada VARCHAR(20) NOT NULL,
@@ -236,6 +276,8 @@ CREATE TABLE IF NOT EXISTS Repositorio_Turma(
 -------------------------------------------
 
 /* OFERTA COLETIVA */ 
+
+-- DROP TABLE IF EXISTS Turma_Oferta_Coletiva;
 
 CREATE TABLE IF NOT EXISTS Turma_Oferta_Coletiva(
     Nome_Completo VARCHAR(20) NOT NULL,
@@ -259,15 +301,19 @@ CREATE TABLE IF NOT EXISTS Turma_Oferta_Coletiva(
     PRIMARY KEY (Nome_Completo, Idioma, Sigla_Turma, Semestre)
 );
 
+-- DROP TABLE IF EXISTS Dias_Turma_Oferta_Coletiva;
+
 CREATE TABLE IF NOT EXISTS Dias_Turma_Oferta_Coletiva(
     Dia_Da_Semana VARCHAR(3) NOT NULL,
     Nome_Completo VARCHAR(100) NOT NULL,
     Idioma VARCHAR(20) NOT NULL,
-    Sigla VARCHAR(15) NOT NULL,
+    Sigla_Turma VARCHAR(15) NOT NULL,
     Semestre DECIMAL(1) NOT NULL,
 
-    PRIMARY KEY(Dia_Da_Semana, Nome_Completo, Idioma, Sigla, Semestre)
+    PRIMARY KEY(Dia_Da_Semana, Nome_Completo, Idioma, Sigla_Turma, Semestre)
 );
+
+-- DROP TABLE IF EXISTS Idioma_Turma_Oferta_Coletiva;
 
 CREATE TABLE IF NOT EXISTS Idioma_Turma_Oferta_Coletiva(
 	Nome_idioma VARCHAR(50) NOT NULL,
@@ -279,6 +325,8 @@ CREATE TABLE IF NOT EXISTS Idioma_Turma_Oferta_Coletiva(
 -------------------------------------------
 
 /* COMPONENTE CURRICULAR */
+
+-- DROP TABLE IF EXISTS Componente_Curricular;
 
 CREATE TABLE IF NOT EXISTS Componente_Curricular(
 	Nome_componente VARCHAR(100) NOT NULL,
@@ -292,12 +340,16 @@ CREATE TABLE IF NOT EXISTS Componente_Curricular(
 	PRIMARY KEY (Nome_componente)
 );
 
+-- DROP TABLE IF EXISTS Tipo_Componente_Curricular;
+
 CREATE TABLE IF NOT EXISTS Tipo_Componente_Curricular(
     Nome_Completo VARCHAR(100),
     Tipo_Disciplina VARCHAR(50),
 
     PRIMARY KEY (Nome_Completo)
 );
+
+-- DROP TABLE IF EXISTS Componente_Curricular_Material;
 
 CREATE TABLE IF NOT EXISTS Componente_Curricular_Material(
     Nome_componente VARCHAR(100),
@@ -311,12 +363,16 @@ CREATE TABLE IF NOT EXISTS Componente_Curricular_Material(
 
 /* ALUNO OFERTA COLETIVA */ 
 
+-- DROP TABLE IF EXISTS Aluno_Oferta_Coletiva;
+
 CREATE TABLE IF NOT EXISTS Aluno_Oferta_Coletiva(
     CPF VARCHAR(11) NOT NULL,
     Vinculo_file VARCHAR(255), 
 
     PRIMARY KEY (CPF)
 );
+
+-- DROP TABLE IF EXISTS Idioma_Aluno_Oferta_Coletiva;
 
 CREATE TABLE IF NOT EXISTS Idioma_Aluno_Oferta_Coletiva (
 	CPF VARCHAR(11) NOT NULL,
@@ -326,6 +382,8 @@ CREATE TABLE IF NOT EXISTS Idioma_Aluno_Oferta_Coletiva (
 	
 	PRIMARY KEY (CPF, Idioma, Proficiencia)
 );
+
+-- DROP TABLE IF EXISTS Aluno_Inscreve_Turma_Oferta;
 
 CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
     CPF_Aluno VARCHAR(11) NOT NULL,
@@ -348,6 +406,8 @@ CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
 
 /* IES */
 
+-- DROP TABLE IF EXISTS IES;
+
 CREATE TABLE IF NOT EXISTS IES (
     CNPJ VARCHAR(14) NOT NULL PRIMARY KEY,
     sigla VARCHAR(10),
@@ -361,6 +421,8 @@ CREATE TABLE IF NOT EXISTS IES (
     campus VARCHAR(100),
     nome_principal VARCHAR(100)
 );
+
+-- DROP TABLE IF EXISTS Endereco_IES;
 
 CREATE TABLE IF NOT EXISTS Endereco_IES (
     CEP VARCHAR(8) NOT NULL,
@@ -376,6 +438,8 @@ CREATE TABLE IF NOT EXISTS Endereco_IES (
     PRIMARY KEY (CEP, numero, CNPJ)
 );
 
+-- DROP TABLE IF EXISTS Telefone_IES;
+
 CREATE TABLE IF NOT EXISTS Telefone_IES (
     CNPJ_IES VARCHAR(14) NOT NULL,
     DDD VARCHAR(3) NOT NULL,
@@ -388,6 +452,8 @@ CREATE TABLE IF NOT EXISTS Telefone_IES (
 -------------------------------------------
 /* COORDENADOR ADMINISTRATIVO */
 
+-- DROP TABLE IF EXISTS Coord_Adm_Cadastra_IES;
+
 CREATE TABLE IF NOT EXISTS Coord_Adm_Cadastra_IES (
     CNPJ_IES VARCHAR(14) NOT NULL,
     CPF_coordenadorAdministrativo VARCHAR(11) NOT NULL,
@@ -396,7 +462,8 @@ CREATE TABLE IF NOT EXISTS Coord_Adm_Cadastra_IES (
     PRIMARY KEY (CNPJ_IES, CPF_coordenadorAdministrativo)
 );
 
--- Tabela coordenadorAdministrativo
+-- DROP TABLE IF EXISTS Coordenador_Administrativo;
+
 CREATE TABLE IF NOT EXISTS Coordenador_Administrativo (
     CPF_usuario VARCHAR(11) NOT NULL PRIMARY KEY,
     funcao_na_instituicao VARCHAR(100),
@@ -489,6 +556,24 @@ ALTER TABLE Atividades_Aluno_Especializacao
 ADD CONSTRAINT FK_Aluno_Especializacao_Cursa_Turma
 FOREIGN KEY (CPF_Aluno, Nome_Componente, Sigla, Semestre) REFERENCES Aluno_Especializacao_Cursa_Turma (CPF_Aluno, Nome_Componente, Sigla, Semestre);
 
+-- Turma Especializacao
+
+--ALTER TABLE Turma_Especializacao DROP CONSTRAINT IF EXISTS FK_Componente;
+
+ALTER TABLE Turma_Especializacao
+ADD CONSTRAINT FK_Componente
+FOREIGN KEY (Nome_componente) REFERENCES Componente_Curricular (Nome_componente)
+ON DELETE RESTRICT
+ON UPDATE RESTRICT;
+
+--ALTER TABLE Dias_Turma_Especializacao DROP CONSTRAINT IF EXISTS FK_Turma_Especializacao;
+
+ALTER TABLE Dias_Turma_Especializacao
+ADD CONSTRAINT FK_Turma_Especializacao
+FOREIGN KEY (Nome_Componente, Sigla, Semestre) REFERENCES Turma_Especializacao (Nome_Componente, Sigla, Semestre)
+ON DELETE RESTRICT
+ON UPDATE RESTRICT;
+
 -- Repositorios
 ALTER TABLE Repositorio_Turma
 ADD CONSTRAINT FK_Turma_Ofertada
@@ -501,16 +586,15 @@ FOREIGN KEY (Titulo_Repositorio) REFERENCES Repositorio (Titulo);
 -- Oferta Coletiva
 ALTER TABLE Turma_Oferta_Coletiva
 ADD CONSTRAINT FK_Curso_Idioma
-FOREIGN KEY (Nome_Completo, Idioma) REFERENCES Curso_Idioma(Nome_Completo, Idioma)
+FOREIGN KEY (Nome_Completo, Idioma) REFERENCES Curso_Idioma(Nome_Completo, Idioma);
 
+--ALTER TABLE Dias_Turma_Oferta_Coletiva DROP CONSTRAINT IF EXISTS FK_Turma_Oferta_Coletiva;
 
-ALTER TABLE Aluno_Inscreve_Turma_Oferta
-ADD CONSTRAINT FK_Aluno_Oferta_Coletiva
-FOREIGN KEY (CPF_Aluno) REFERENCES Aluno_Oferta_Coletiva(CPF);
-
-ALTER TABLE Aluno_Inscreve_Turma_Oferta
+ALTER TABLE Dias_Turma_Oferta_Coletiva
 ADD CONSTRAINT FK_Turma_Oferta_Coletiva
-FOREIGN KEY (Nome_Idioma, Proficiencia_Turma, Nome_Completo, Sigla_Turma, Semestre, Data_Inscricao) REFERENCES Turma_Oferta_Coletiva(Nome_Idioma, Proficiencia, Nome_Completo, Sigla_Turma, Semestre, Data_Inscricao);
+FOREIGN KEY (Nome_Completo, Idioma, Sigla_Turma, Semestre) REFERENCES Turma_Oferta_Coletiva (Nome_Completo, Idioma, Sigla_Turma, Semestre)
+ON DELETE RESTRICT
+ON UPDATE RESTRICT;
 
 -- Componente Curricular Idioma
 ALTER TABLE ComponenteCurricular 
@@ -573,14 +657,30 @@ ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 --Aluno Oferta Coletiva
-ALTER TABLE alunoOfertaColetiva
+ALTER TABLE Aluno_Oferta_Coletiva
 ADD CONSTRAINT FK_Usuario
 FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
-ALTER TABLE idiomaAlunoOfertaColetiva
+ALTER TABLE Idioma_Aluno_Oferta_Coletiva
 ADD CONSTRAINT FK_Usuario
 FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+--ALTER TABLE Aluno_Inscreve_Turma_Oferta DROP CONSTRAINT IF EXISTS FK_Aluno_Oferta_Coletiva;
+
+ALTER TABLE Aluno_Inscreve_Turma_Oferta
+ADD CONSTRAINT FK_Aluno_Oferta_Coletiva
+FOREIGN KEY (CPF_Aluno) REFERENCES Aluno_Oferta_Coletiva(CPF)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+--ALTER TABLE Aluno_Inscreve_Turma_Oferta DROP CONSTRAINT IF EXISTS FK_Turma_Oferta_Coletiva;
+
+ALTER TABLE Aluno_Inscreve_Turma_Oferta
+ADD CONSTRAINT FK_Turma_Oferta_Coletiva
+FOREIGN KEY (Idioma, Nome_Completo, Sigla_Turma, Semestre) REFERENCES Turma_Oferta_Coletiva(Idioma, Nome_Completo, Sigla_Turma, Semestre)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
