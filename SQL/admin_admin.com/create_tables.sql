@@ -1,74 +1,88 @@
 
 /*-------------- Tabelas ------------------ */
 
---Gestor
-
-CREATE TABLE Gestor (
-    CPF DECIMAL(11) PRIMARY KEY,
+/* GESTOR */
+CREATE TABLE IF NOT EXISTS Gestor (
+    CPF VARCHAR(11) NOT NULL PRIMARY KEY,
     Data_Cadastro DATE
 );
 
-CREATE TABLE Gestor_Analisa_Parceiro(
-    CPF_Gestor DECIMAL(11),
-    CNPJ_Parceiro DECIMAL(14),
-    Status_ VARCHAR(100),
+CREATE TABLE IF NOT EXISTS Gestor_Analisa_Parceiro(
+    CPF_Gestor VARCHAR(11) NOT NULL,
+    CNPJ_Parceiro VARCHAR(14) NOT NULL,
+    Status_ VARCHAR(100), -- pq 100 pro status? 
     Data_Analise DATE,
 
     PRIMARY KEY (CPF_Gestor, CNPJ_Parceiro)
 );
 
---Parceiro
+CREATE TABLE IF NOT EXISTS Gestor_Aprova_Coord_Adm (
+    CPF_gestorRedeAndifes VARCHAR(11) NOT NULL,
+    CPF_coordenadorAdministrativo VARCHAR(11) NOT NULL,
+    data_fim TIMESTAMP,
+    data_inicio TIMESTAMP,
+    documento_de_atuacao VARCHAR(255),
 
-CREATE TABLE Parceiro(
-  CNPJ DECIMAL(14) PRIMARY KEY,
-  Nome VARCHAR(200),
+    CHECK (data_inicio < data_fim),
+
+    PRIMARY KEY (CPF_gestorRedeAndifes, CPF_coordenadorAdministrativo)
+);
+
+-------------------------------------------
+
+/* PARCEIRO */ 
+
+CREATE TABLE IF NOT EXISTS Parceiro(
+  CNPJ VARCHAR(14) NOT NULL PRIMARY KEY,
+  Nome VARCHAR(200) NOT NULL,
   Descricao VARCHAR(500),
   CEP DECIMAL(8),
   Numero DECIMAL(5),
   Complemento VARCHAR(100)
 );
 
-CREATE TABLE EnderecoParceiro(
-  CEP DECIMAL(8) PRIMARY KEY,
-  Rua VARCHAR(100),
-  Numero DECIMAL(5),
-  Bairro VARCHAR(100),
-  Cidade VARCHAR(100),
-  Estado VARCHAR(100),
-  Pais VARCHAR(100)
+CREATE TABLE IF NOT EXISTS Endereco_Parceiro(
+  CEP DECIMAL(8) NOT NULL PRIMARY KEY,
+  Rua VARCHAR(100) NOT NULL,
+  Numero DECIMAL(5) NOT NULL,
+  Bairro VARCHAR(100) NOT NULL,
+  Cidade VARCHAR(100) NOT NULL,
+  Estado VARCHAR(100) NOT NULL,
+  Pais VARCHAR(100) NOT NULL
 );
 
--- Isso tava jogado no meio do código, verificar se é algo importante
--- parceiro(PK(FK Parceiro(CEP)) rua, numero, complemento, bairro, cidade, estado, pais)
-
-CREATE TABLE Telefone_Parceiro(
-    CNPJ_Parceiro DECIMAL(14),
+CREATE TABLE IF NOT EXISTS Telefone_Parceiro(
+    CNPJ_Parceiro VARCHAR(14) NOT NULL,
     DDI DECIMAL(3),
     DDD DECIMAL(2),
-    Numero DECIMAL(9),
+    Numero DECIMAL(9) NOT NULL,
 
     PRIMARY KEY (CNPJ_Parceiro, DDI, DDD, Numero)
 );
 
---Edital
+-------------------------------------------
 
-CREATE TABLE Edital(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
+/* EDITAL */
+
+CREATE TABLE IF NOT EXISTS Edital(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
     Data_Publicacao DATE,
     Data_Inicio DATE,
     Data_Fim DATE,
-    Edital_File BYTEA,
-    Nome VARCHAR(100),
+    Edital_File VARCHAR(255), 
+    Nome VARCHAR(100) NOT NULL,
+
+    CHECK(Data_Inicio < Data_Fim), 
 
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
-CREATE TABLE Edital_Oferta_Coletiva(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
+CREATE TABLE IF NOT EXISTS Edital_Oferta_Coletiva(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
     Max_Alunos_Turma  DECIMAL(4),
     Max_Alunos_Lista_Espera  DECIMAL(4),
     Max_Vagas_Reservadas_Turma DECIMAL(3),
@@ -76,220 +90,266 @@ CREATE TABLE Edital_Oferta_Coletiva(
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
-CREATE TABLE Idiomas_Edital_Oferta_Coletiva(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
-    Idioma VARCHAR(50),
+CREATE TABLE IF NOT EXISTS Idiomas_Edital_Oferta_Coletiva(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
+    Idioma VARCHAR(50) NOT NULL,
 
     PRIMARY KEY (Numero, Ano, Semestre, Idioma)
 );
 
-CREATE TABLE Edital_Cred_Especialista(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
+CREATE TABLE IF NOT EXISTS Edital_Cred_Especialista(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
 
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
-CREATE TABLE Edital_Cred_Prof_Isf(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
+CREATE TABLE IF NOT EXISTS Edital_Admite_Docente_Especialista(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
+    CPF_Docente_Especialista VARCHAR(11) NOT NULL,
+
+    PRIMARY KEY (Numero, Ano, Semestre, CPF_Docente_Especialista)
+);
+
+CREATE TABLE IF NOT EXISTS Edital_Cred_Prof_Isf(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
 
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
-CREATE TABLE Edital_Curso_Especializacao(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
-
-    PRIMARY KEY (Numero, Ano, Semestre)
-);
-
---Aluno Especializacao
-CREATE TABLE Aluno_Especializacao(
-    CPF DECIMAL(11),--FOREIGN KEY professor_isf(CPF)
-    Titulacao VARCHAR(40),
-    Data_Ingresso DATE,
-    Data_Conclusao DATE,
-
-    PRIMARY KEY (CPF)
-);
-
-CREATE TABLE Edital_Aluno_Especializacao(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
+CREATE TABLE IF NOT EXISTS Edital_Aluno_Especializacao(
+    Numero DECIMAL(30) NOT NULL,
+    Ano DECIMAL(4) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
     Quantidade_Vagas DECIMAL(4),
     
     PRIMARY KEY (Numero, Ano, Semestre)
 );
 
-CREATE TABLE Edital_Admite_Docente_Especialista(
-    Numero DECIMAL(30),
-    Ano DECIMAL(4),
-    Semestre DECIMAL(1),
-    CPF_Docente_Especialista DECIMAL(11),
+-------------------------------------------
 
-    PRIMARY KEY (Numero, Ano, Semestre)
+/* ALUNO ESPECIALIZACAO */
+
+CREATE TABLE IF NOT EXISTS Aluno_Especializacao(
+    CPF VARCHAR(11) NOT NULL, 
+    Titulacao VARCHAR(40) NOT NULL,
+    Data_Ingresso DATE,
+    Data_Conclusao DATE,
+    Diploma_File VARCHAR(255),
+    CHECK(Data_Ingresso < Data_Conclusao),
+
+    PRIMARY KEY (CPF)
 );
 
-CREATE TABLE Aluno_Especializacao_Produz_Repositorio(
-    CPF_Aluno_Especializacao DECIMAL(11),
-    Repositorio_Titulo VARCHAR(20),
+CREATE TABLE IF NOT EXISTS Aluno_Especializacao_Produz_Repositorio(
+    CPF_Aluno_Especializacao VARCHAR(11) NOT NULL,
+    Repositorio_Titulo VARCHAR(20) NOT NULL,
     Foi_Validado_Pelo_Orientador BOOLEAN,
     
     PRIMARY KEY (CPF_Aluno_Especializacao, Repositorio_Titulo)
 );
 
-CREATE TABLE Aluno_Especializacao_Cursa_Turma(
-    CPF_Aluno DECIMAL(11),
-    Nome_Componente VARCHAR(20),
-    Sigla VARCHAR(15),
-    Semestre DECIMAL (1),
+CREATE TABLE IF NOT EXISTS Aluno_Especializacao_Cursa_Turma(
+    CPF_Aluno VARCHAR(11) NOT NULL,
+    Nome_Componente VARCHAR(100) NOT NULL,
+    Sigla VARCHAR(15) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL, 
+    Situacao_Aluno INTEGER, --Separar algo tipo 0 - cursando, 1 - aprovado, 2 - reprovado etc
+    Frequencia DECIMAL(3),
+
+    CHECK(Frequencia > 0 AND Frequencia < 100), 
 
     PRIMARY KEY (CPF_Aluno, Nome_Componente, Sigla, Semestre)
 );
 
-CREATE TABLE Atividades_Aluno_Especializacao(
-    --FK_Aluno_Especializacao_Cursa_Turma
-    CPF_Aluno DECIMAL(11),
-    Nome_Componente VARCHAR(20),
-    Sigla VARCHAR(15),
-    Semestre DECIMAL (1),
+CREATE TABLE IF NOT EXISTS Atividades_Aluno_Especializacao(
+    CPF_Aluno VARCHAR(11) NOT NULL,
+    Nome_Componente VARCHAR(100) NOT NULL,
+    Sigla VARCHAR(15) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
 
-    Atividade VARCHAR(40),
+    Atividade VARCHAR(40) NOT NULL,
 
-    Nota DECIMAL(2),
+    Nota DECIMAL(2, 2),
+
+    CHECK(Nota >= 0 AND Nota <= 10),
 
     PRIMARY KEY (CPF_Aluno, Nome_Componente, Sigla, Semestre, Atividade)
 );
 
--- Repositorio
+-------------------------------------------
+/* TURMA ESPECIALIZACAO */
+CREATE TABLE IF NOT EXISTS Turma_Especializacao(
+    Nome_Componente VARCHAR(100) NOT NULL,
+    Sigla VARCHAR(15) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
 
-CREATE TABLE Repositorio(
-    Titulo VARCHAR(20),
-    Link VARCHAR(50),
+    Hora_Inicio TIMESTAMP,
+    Hora_Fim TIMESTAMP,
+    Qtde_Vagas DECIMAL(4),
+
+    CHECK (Hora_Inicio < Hora_Fim),
+
+    PRIMARY KEY(Nome_Componente, Sigla, Semestre)
+);
+
+CREATE TABLE IF NOT EXISTS Dias_Turma_Especializacao(
+    Dia_Da_Semana VARCHAR(3) NOT NULL,
+    Nome_Componente VARCHAR(100) NOT NULL,
+    Sigla VARCHAR(15) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
+
+    PRIMARY KEY(Dia_Da_Semana, Nome_Componente, Sigla, Semestre)
+);
+-------------------------------------------
+
+/* REPOSITORIO */
+
+CREATE TABLE IF NOT EXISTS Repositorio(
+    Titulo VARCHAR(20) NOT NULL,
+    Link VARCHAR(50) NOT NULL,
     Data_Inclusao DATE,
 
     PRIMARY KEY (Titulo)
 );
 
-CREATE TABLE Repositorio_Turma(
-    Nome_Turma_Ofertada VARCHAR(20),
-    Idioma_Turma_Ofertada VARCHAR(20),
-    Sigla_Turma_Ofertada VARCHAR(10),
-    Semestre_Turma_Ofertada DECIMAL(1),
+CREATE TABLE IF NOT EXISTS Repositorio_Turma(
+    Nome_Turma_Ofertada VARCHAR(20) NOT NULL,
+    Idioma_Turma_Ofertada VARCHAR(20) NOT NULL,
+    Sigla_Turma_Ofertada VARCHAR(10) NOT NULL,
+    Semestre_Turma_Ofertada DECIMAL(1) NOT NULL,
 
-    Titulo_Repositorio VARCHAR(20),
+    Titulo_Repositorio VARCHAR(20) NOT NULL,
 
     Foi_Aprovado_Pelo_Orientador BOOLEAN,
 
     PRIMARY KEY (Nome_Turma_Ofertada, Idioma_Turma_Ofertada, Sigla_Turma_Ofertada, Semestre_Turma_Ofertada, Titulo_Repositorio)
 );
 
--- Oferta Coletiva
-CREATE TABLE Turma_Oferta_Coletiva(
-    --FK_Curso_Idioma
-    Nome_Completo_Idioma VARCHAR(20),
-    Idioma VARCHAR(20),
+-------------------------------------------
 
-    Sigla_Turma VARCHAR(10),
-    Semestre DECIMAL(1),
+/* OFERTA COLETIVA */ 
+
+CREATE TABLE IF NOT EXISTS Turma_Oferta_Coletiva(
+    Nome_Completo VARCHAR(20) NOT NULL,
+    Idioma VARCHAR(20) NOT NULL,
+
+    Sigla_Turma VARCHAR(10) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
 
     Qtde_Vagas_Reservadas DECIMAL(4),
-    Hora_Inicio TIME,
-    Hora_Fim TIME,
-    Dia_Da_Semana1 VARCHAR(3),
-    Dia_Da_Demana2 VARCHAR(3),
+    Hora_Inicio TIMESTAMP,
+    Hora_Fim TIMESTAMP,
     Qtde_Vagas DECIMAL(4),
-    Qtde_Reprovados DECIMAL(4),
-    Qtde_Desistentes DECIMAL(4),
-    Qtde_Concluintes DECIMAL(4),
-    Qtde_Inscritos DECIMAL(4),
-    Qtde_Evadidos DECIMAL(4),
+    --Qtde_Reprovados DECIMAL(4), 
+    --Qtde_Desistentes DECIMAL(4),
+    --Qtde_Concluintes DECIMAL(4), -> acho que atributos derivados nao vao na tabela 
+    --Qtde_Inscritos DECIMAL(4),
+    --Qtde_Evadidos DECIMAL(4),
 
-    PRIMARY KEY (Nome_Completo_Idioma, Idioma, Sigla_Turma, Semestre)
+    CHECK (Hora_Inicio < Hora_Fim),
+
+    PRIMARY KEY (Nome_Completo, Idioma, Sigla_Turma, Semestre)
 );
 
+CREATE TABLE IF NOT EXISTS Dias_Turma_Oferta_Coletiva(
+    Dia_Da_Semana VARCHAR(3) NOT NULL,
+    Nome_Completo VARCHAR(100) NOT NULL,
+    Idioma VARCHAR(20) NOT NULL,
+    Sigla VARCHAR(15) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
 
-CREATE TABLE Aluno_Inscreve_Turma_Oferta(
-    --FK_Aluno_Oferta_Coletiva
-    CPF_Aluno DECIMAL(11),
-    --FK_Turma_Oferta_Coletiva
-    Nome_Idioma VARCHAR(20),
-    Proficiencia_Turma VARCHAR(20),
-    Nome_Completo_Idioma VARCHAR(20),
-    Sigla_Turma VARCHAR(10),
-    Semestre DECIMAL(1),
-
-    Data_Inscricao DATE,
-
-    Posicao_Lista DECIMAL (5),
-    Situacao_Inscricao VARCHAR(15),
-    Data_Matricula DATE,
-    Situacao_matricula VARCHAR(15),
-    
-    PRIMARY KEY (CPF_Aluno, Nome_Idioma, Proficiencia_Turma, Nome_Completo_Idioma, Sigla_Turma, Semestre, Data_Inscricao)
--- Componente Curricular
+    PRIMARY KEY(Dia_Da_Semana, Nome_Completo, Idioma, Sigla, Semestre)
 );
-CREATE TABLE ProficienciaIdiomaComponente(
-	Nome_idioma VARCHAR(50),
-	Proficiencia VARCHAR(10),
+
+CREATE TABLE IF NOT EXISTS Idioma_Turma_Oferta_Coletiva(
+	Nome_idioma VARCHAR(50) NOT NULL,
+	Proficiencia VARCHAR(10) NOT NULL,
 	
 	PRIMARY KEY (Nome_idioma,Proficiencia)
 );
 
-CREATE TABLE ComponenteCurricular(
-	Nome_componente VARCHAR(100),
+-------------------------------------------
+
+/* COMPONENTE CURRICULAR */
+
+CREATE TABLE IF NOT EXISTS Componente_Curricular(
+	Nome_componente VARCHAR(100) NOT NULL,
 	Nome_idioma VARCHAR(50),
 	Proficiencia VARCHAR(10),
-	Carga_horaria_pratica INT,
-	Carga_horaria_teorica INT,
+	Carga_horaria_pratica TIME,
+	Carga_horaria_teorica TIME,
 	Obrigatoriedade BOOLEAN,
 	Eixo_tematico VARCHAR(50),
 	
 	PRIMARY KEY (Nome_componente)
 );
 
--- Tipo Componente Curricular
-CREATE TABLE TipoComponenteCurricular(
+CREATE TABLE IF NOT EXISTS Tipo_Componente_Curricular(
     Nome_Completo VARCHAR(100),
     Tipo_Disciplina VARCHAR(50),
 
     PRIMARY KEY (Nome_Completo)
 );
 
--- Componente Curricular Material
-CREATE TABLE componenteCurricularMaterial(
+CREATE TABLE IF NOT EXISTS Componente_Curricular_Material(
     Nome_componente VARCHAR(100),
     Nome_material VARCHAR(100),   
-    data DATE,
+    Data_Material TIMESTAMP,
 
-    PRIMARY KEY (Nome_componente, Nome_material, data)
-  
--- Aluno Oferta Coletiva
-CREATE TABLE alunoOfertaColetiva(
-    CPF DECIMAL(11),
-    Vinculo_file VARCHAR(100),
-
-    PRIMARY KEY (CPF, Vinculo_file)
+    PRIMARY KEY (Nome_componente, Nome_material, Data_Material)
 );
 
-CREATE TABLE idiomaAlunoOfertaColetiva (
-	CPF DECIMAL(11),
-	Idioma VARCHAR(50),
-	Proficiencia VARCHAR(50),
+-------------------------------------------
+
+/* ALUNO OFERTA COLETIVA */ 
+
+CREATE TABLE IF NOT EXISTS Aluno_Oferta_Coletiva(
+    CPF VARCHAR(11) NOT NULL,
+    Vinculo_file VARCHAR(255), 
+
+    PRIMARY KEY (CPF)
+);
+
+CREATE TABLE IF NOT EXISTS Idioma_Aluno_Oferta_Coletiva (
+	CPF VARCHAR(11) NOT NULL,
+	Idioma VARCHAR(50) NOT NULL,
+	Proficiencia VARCHAR(50) NOT NULL,
 	Declaracao_proficiencia VARCHAR(100),
 	
 	PRIMARY KEY (CPF, Idioma, Proficiencia)
+);
 
--- Tabela IES
-CREATE TABLE IES (
-    CNPJ VARCHAR(14) PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
+    CPF_Aluno VARCHAR(11) NOT NULL,
+    Idioma VARCHAR(20) NOT NULL,
+    Proficiencia_Turma VARCHAR(20) NOT NULL,
+    Nome_Completo VARCHAR(20) NOT NULL,
+    Sigla_Turma VARCHAR(10) NOT NULL,
+    Semestre DECIMAL(1) NOT NULL,
+
+    Data_Inscricao TIMESTAMP NOT NULL,
+
+    Posicao_Lista DECIMAL(5),
+    Situacao_Inscricao INTEGER, --Separar como se fosse um enum eu acho
+    Data_Matricula TIMESTAMP,
+    Situacao_matricula VARCHAR(15),
+
+    PRIMARY KEY (CPF_Aluno, Nome_Completo, Idioma, Sigla_Turma, Semestre)
+);
+-------------------------------------------
+
+/* IES */
+
+CREATE TABLE IF NOT EXISTS IES (
+    CNPJ VARCHAR(14) NOT NULL PRIMARY KEY,
     sigla VARCHAR(10),
     participou_isf BOOLEAN,
     tem_lab_mais_unidos BOOLEAN,
@@ -302,52 +362,43 @@ CREATE TABLE IES (
     nome_principal VARCHAR(100)
 );
 
--- Tabela EnderecoIES
-CREATE TABLE EnderecoIES (
-    CEP DECIMAL(8),
-    CNPJ VARCHAR(14),
+CREATE TABLE IF NOT EXISTS Endereco_IES (
+    CEP VARCHAR(8) NOT NULL,
+    CNPJ VARCHAR(14) NOT NULL,
     rua VARCHAR(100),
-    numero VARCHAR(10),
+    numero VARCHAR(10) NOT NULL,
     complemento VARCHAR(50),
     bairro VARCHAR(50),
     cidade VARCHAR(50),
     estado VARCHAR(2),
     pais VARCHAR(50),
 
-    PRIMARY KEY (CEP, numero)
+    PRIMARY KEY (CEP, numero, CNPJ)
 );
 
--- Tabela telefoneIES
-CREATE TABLE telefoneIES (
-    CNPJ_IES DECIMAL(14),
-    DDD VARCHAR(3),
-    DDI VARCHAR(3),
-    numero VARCHAR(15),
+CREATE TABLE IF NOT EXISTS Telefone_IES (
+    CNPJ_IES VARCHAR(14) NOT NULL,
+    DDD VARCHAR(3) NOT NULL,
+    DDI VARCHAR(3) NOT NULL,
+    numero VARCHAR(15) NOT NULL,
 
     PRIMARY KEY (CNPJ_IES, DDI, DDD, numero)
 );
 
--- Tabela gestorAprovaCoordAdm
-CREATE TABLE gestorAprovaCoordAdm (
-    CPF_gestorRedeAndifes VARCHAR(11),
-    CPF_coordenadorAdministrativo VARCHAR(11),
-    data_fim DATE,
-    data_inicio DATE,
-    documento_de_atuacao VARCHAR(255),
-    PRIMARY KEY (CPF_gestorRedeAndifes, CPF_coordenadorAdministrativo)
-);
+-------------------------------------------
+/* COORDENADOR ADMINISTRATIVO */
 
--- Tabela coordAdmCadastraIES
-CREATE TABLE coordAdmCadastraIES (
-    CNPJ_IES VARCHAR(14),
-    CPF_coordenadorAdministrativo VARCHAR(11),
+CREATE TABLE IF NOT EXISTS Coord_Adm_Cadastra_IES (
+    CNPJ_IES VARCHAR(14) NOT NULL,
+    CPF_coordenadorAdministrativo VARCHAR(11) NOT NULL,
     termo_de_compromisso VARCHAR(255),
+
     PRIMARY KEY (CNPJ_IES, CPF_coordenadorAdministrativo)
 );
 
 -- Tabela coordenadorAdministrativo
-CREATE TABLE coordenadorAdministrativo (
-    CPF_usuario VARCHAR(11) PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Coordenador_Administrativo (
+    CPF_usuario VARCHAR(11) NOT NULL PRIMARY KEY,
     funcao_na_instituicao VARCHAR(100),
     curriculo_lates VARCHAR(255),
     data_cadastro DATE,
@@ -450,7 +501,7 @@ FOREIGN KEY (Titulo_Repositorio) REFERENCES Repositorio (Titulo);
 -- Oferta Coletiva
 ALTER TABLE Turma_Oferta_Coletiva
 ADD CONSTRAINT FK_Curso_Idioma
-FOREIGN KEY (Nome_Completo_Idioma, Idioma) REFERENCES Curso_Idioma(Nome_Completo, Idioma)
+FOREIGN KEY (Nome_Completo, Idioma) REFERENCES Curso_Idioma(Nome_Completo, Idioma)
 
 
 ALTER TABLE Aluno_Inscreve_Turma_Oferta
@@ -459,7 +510,8 @@ FOREIGN KEY (CPF_Aluno) REFERENCES Aluno_Oferta_Coletiva(CPF);
 
 ALTER TABLE Aluno_Inscreve_Turma_Oferta
 ADD CONSTRAINT FK_Turma_Oferta_Coletiva
-FOREIGN KEY (Nome_Idioma, Proficiencia_Turma, Nome_Completo_Idioma, Sigla_Turma, Semestre, Data_Inscricao) REFERENCES Turma_Oferta_Coletiva(Nome_Idioma, Proficiencia, Nome_Completo, Sigla_Turma, Semestre, Data_Inscricao);
+FOREIGN KEY (Nome_Idioma, Proficiencia_Turma, Nome_Completo, Sigla_Turma, Semestre, Data_Inscricao) REFERENCES Turma_Oferta_Coletiva(Nome_Idioma, Proficiencia, Nome_Completo, Sigla_Turma, Semestre, Data_Inscricao);
+
 -- Componente Curricular Idioma
 ALTER TABLE ComponenteCurricular 
 ADD CONSTRAINT FK_IdiomaComponenteCurricular
@@ -519,15 +571,16 @@ ADD CONSTRAINT FK_material
 FOREIGN KEY (Nome_material, data) REFERENCES Material(Nome_material, data)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
--- Aluno Oferta Coletiva
--- ALTER TABLE alunoOfertaColetiva
--- ADD CONSTRAINT FK_Usuario
--- FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
--- ON DELETE RESTRICT
--- ON UPDATE CASCADE;
 
--- ALTER TABLE idiomaAlunoOfertaColetiva
--- ADD CONSTRAINT FK_Usuario
--- FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
--- ON DELETE RESTRICT
--- ON UPDATE CASCADE;
+--Aluno Oferta Coletiva
+ALTER TABLE alunoOfertaColetiva
+ADD CONSTRAINT FK_Usuario
+FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+ALTER TABLE idiomaAlunoOfertaColetiva
+ADD CONSTRAINT FK_Usuario
+FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
