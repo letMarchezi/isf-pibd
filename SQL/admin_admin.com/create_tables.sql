@@ -1,4 +1,8 @@
 /*-------------- Tabelas ------------------ */
+-- tabela fake somente para ter a chave
+CREATE TABLE IF NOT EXISTS Usuario (
+    CPF VARCHAR(11) NOT NULL PRIMARY KEY
+);
 
 /* GESTOR */
 
@@ -144,6 +148,15 @@ CREATE TABLE IF NOT EXISTS Edital_Cred_Prof_Isf(
     Semestre DECIMAL(1) NOT NULL,
 
     PRIMARY KEY (Numero, Ano, Semestre)
+);
+
+CREATE TABLE IF NOT EXISTS Edital_Admite_Aluno_Graduacao(
+    Numero_edital DECIMAL(30) NOT NULL,
+    Ano_edital DECIMAL(4) NOT NULL,
+    Semestre_edital DECIMAL(1) NOT NULL,
+    CPF_aluno VARCHAR (11),
+
+    PRIMARY KEY (Numero_edital, Ano_edital, Semestre_edital, CPF_aluno)
 );
 
 -- DROP TABLE IF EXISTS Edital_Aluno_Especializacao;
@@ -313,14 +326,7 @@ CREATE TABLE IF NOT EXISTS Dias_Turma_Oferta_Coletiva(
     PRIMARY KEY(Dia_Da_Semana, Nome_Completo, Idioma, Sigla_Turma, Semestre)
 );
 
--- DROP TABLE IF EXISTS Idioma_Turma_Oferta_Coletiva;
 
-CREATE TABLE IF NOT EXISTS Idioma_Turma_Oferta_Coletiva(
-	Nome_idioma VARCHAR(50) NOT NULL,
-	Proficiencia VARCHAR(10) NOT NULL,
-	
-	PRIMARY KEY (Nome_idioma,Proficiencia)
-);
 
 -------------------------------------------
 
@@ -329,15 +335,15 @@ CREATE TABLE IF NOT EXISTS Idioma_Turma_Oferta_Coletiva(
 -- DROP TABLE IF EXISTS Componente_Curricular;
 
 CREATE TABLE IF NOT EXISTS Componente_Curricular(
-	Nome_componente VARCHAR(100) NOT NULL,
-	Nome_idioma VARCHAR(50),
-	Proficiencia VARCHAR(10),
-	Carga_horaria_pratica TIME,
-	Carga_horaria_teorica TIME,
-	Obrigatoriedade BOOLEAN,
-	Eixo_tematico VARCHAR(50),
-	
-	PRIMARY KEY (Nome_componente)
+  Nome_componente VARCHAR(100) NOT NULL,
+  Nome_idioma VARCHAR(50),
+  Proficiencia VARCHAR(10),
+  Carga_horaria_pratica TIME,
+  Carga_horaria_teorica TIME,
+  Obrigatoriedade BOOLEAN,
+  Eixo_tematico VARCHAR(50),
+  
+  PRIMARY KEY (Nome_componente)
 );
 
 -- DROP TABLE IF EXISTS Tipo_Componente_Curricular;
@@ -359,6 +365,70 @@ CREATE TABLE IF NOT EXISTS Componente_Curricular_Material(
     PRIMARY KEY (Nome_componente, Nome_material, Data_Material)
 );
 
+------------------------------------
+
+/* PROFESSOR ISF */
+
+-- DROP TABLE IF EXISTS ProfessorIsF
+
+CREATE TABLE IF NOT EXISTS ProfessorIsF(
+    CPF_usuario VARCHAR(11) NOT NULL,
+    
+    PRIMARY KEY(CPF_usuario)
+);
+
+-- DROP TABLE IF EXISTS ProfessorIsf_Idioma
+
+CREATE TABLE IF NOT EXISTS ProfessorIsf_Idioma(
+    CPF_ProfessorIsF VARCHAR(11),
+    Idioma VARCHAR(30),
+    Proficiencia VARCHAR(5),
+    Declaracao_proficiencia VARCHAR(256),
+
+    PRIMARY KEY(CPF_ProfessorIsF, Idioma)
+);
+
+-- DROP TABLE IF EXISTS ProfessorIsfMinistraTurma
+
+CREATE TABLE IF NOT EXISTS ProfessorIsf_Ministra_Turma(
+    CPF_ProfessorIsF VARCHAR(11),
+    Nome_curso VARCHAR(50),   -- Os tamanho do varchar dependem da entidade turma
+    Idioma_turma VARCHAR(20),            -- !
+    Sigla_turma VARCHAR(10),            -- !
+    Semestre DECIMAL(1),
+    Foi_validado_pelo_orientador BOOLEAN,
+
+    PRIMARY KEY(CPF_ProfessorIsF, Nome_curso, Idioma_turma, Sigla_turma, Semestre)
+
+);
+
+-- DROP TABLE IF EXISTS AlunoGraduação;
+
+/* ALUNO GRADUAÇÃO (herda de Professor isf) */
+CREATE TABLE IF NOT EXISTS Aluno_Graduacao(
+    CPF_Aluno_Graduacao VARCHAR(11),
+    Termo_compromisso_file VARCHAR(256),
+    Vinculo_file VARCHAR(256),
+    Poca_file VARCHAR(256),
+
+    PRIMARY KEY(CPF_Aluno_Graduacao)
+);
+
+/* MATERIAIS */
+
+-- DROP TABLE IF EXISTS Material;
+
+CREATE TABLE IF NOT EXISTS Material(
+    Nome VARCHAR(50),
+    Data_criacao DATE,
+    Arquivo VARCHAR(256),
+    Link VARCHAR(256),
+    Status VARCHAR(10),
+    Tipo_material VARCHAR(10),            --Pode ser ebook, vídeo
+
+    PRIMARY KEY (Nome, Data_criacao)
+);
+
 -------------------------------------------
 
 /* ALUNO OFERTA COLETIVA */ 
@@ -375,12 +445,12 @@ CREATE TABLE IF NOT EXISTS Aluno_Oferta_Coletiva(
 -- DROP TABLE IF EXISTS Idioma_Aluno_Oferta_Coletiva;
 
 CREATE TABLE IF NOT EXISTS Idioma_Aluno_Oferta_Coletiva (
-	CPF VARCHAR(11) NOT NULL,
-	Idioma VARCHAR(50) NOT NULL,
-	Proficiencia VARCHAR(50) NOT NULL,
-	Declaracao_proficiencia VARCHAR(100),
-	
-	PRIMARY KEY (CPF, Idioma, Proficiencia)
+  CPF VARCHAR(11) NOT NULL,
+  Idioma VARCHAR(50) NOT NULL,
+  Proficiencia VARCHAR(50) NOT NULL,
+  Declaracao_proficiencia VARCHAR(100),
+  
+  PRIMARY KEY (CPF, Idioma, Proficiencia)
 );
 
 -- DROP TABLE IF EXISTS Aluno_Inscreve_Turma_Oferta;
@@ -388,8 +458,7 @@ CREATE TABLE IF NOT EXISTS Idioma_Aluno_Oferta_Coletiva (
 CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
     CPF_Aluno VARCHAR(11) NOT NULL,
     Idioma VARCHAR(20) NOT NULL,
-    Proficiencia_Turma VARCHAR(20) NOT NULL,
-    Nome_Completo VARCHAR(20) NOT NULL,
+    Nome_turma VARCHAR(20) NOT NULL,
     Sigla_Turma VARCHAR(10) NOT NULL,
     Semestre DECIMAL(1) NOT NULL,
 
@@ -400,7 +469,7 @@ CREATE TABLE IF NOT EXISTS Aluno_Inscreve_Turma_Oferta(
     Data_Matricula TIMESTAMP,
     Situacao_matricula VARCHAR(15),
 
-    PRIMARY KEY (CPF_Aluno, Nome_Completo, Idioma, Sigla_Turma, Semestre)
+    PRIMARY KEY (CPF_Aluno, Nome_turma, Idioma, Sigla_Turma, Semestre)
 );
 -------------------------------------------
 
@@ -472,7 +541,116 @@ CREATE TABLE IF NOT EXISTS Coordenador_Administrativo (
     POCA VARCHAR(50)
 );
 
-/*-------------- FK CONSTRAINTS ------------------ */
+
+-- TUDO DAQUI PRA BAIXO FOI DO GRUPO 12:
+
+CREATE TABLE IF NOT EXISTS Docente_Especialista(
+    CPF_docente VARCHAR(11) UNIQUE NOT NULL,
+    data_credenciamento DATE,
+    curriculo VARCHAR(256),
+    titulacao VARCHAR(16),
+    poca_file VARCHAR(255),
+    vinculo_file VARCHAR(255),
+    link_cnpq VARCHAR(255),
+
+    is_orientador BOOLEAN,
+    is_autor BOOLEAN,
+    is_ministrante BOOLEAN,
+    is_coordenador_pedagogico BOOLEAN,
+
+    CHECK((is_orientador IS true) OR 
+          (is_autor IS true) OR
+          (is_ministrante IS true) OR 
+          (is_coordenador_pedagogico IS true)),
+
+    PRIMARY KEY(CPF_Docente)
+);
+
+-- DROP TABLE IF EXISTS Docente_Autor_Produz_Material;
+
+CREATE TABLE IF NOT EXISTS Docente_Autor_Produz_Material(
+    CPF_docente VARCHAR(11) NOT NULL,
+    nome VARCHAR(128) NOT NULL,
+    data_producao DATE NOT NULL,
+
+    PRIMARY KEY (CPF_Docente, nome, data_producao)
+);
+
+-- DROP TABLE IF EXISTS Horarios_Disponiveis_Docente_Ministrante;
+
+CREATE TABLE IF NOT EXISTS Horarios_Disponiveis_Docente_Ministrante(
+    CPF_docente VARCHAR(11) NOT NULL,
+    horario_disponivel INTEGER NOT NULL, -- Não sei que tipo de variável isso seria
+
+    PRIMARY KEY (CPF_Docente, horario_disponivel)
+);
+
+-- DROP TABLE IF EXISTS Docente_Orientador_Orienta_ProfessorISF;
+
+CREATE TABLE IF NOT EXISTS Docente_Orientador_Orienta_ProfessorISF(
+    CPF_docente VARCHAR(11) NOT NULL,
+    CPF_professorIsf VARCHAR(11) NOT NULL,
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP,
+
+    PRIMARY KEY (CPF_Docente, CPF_professorIsf, data_inicio)
+);
+
+-- DROP TABLE IF EXISTS Curso_Idioma;
+
+CREATE TABLE Curso_Idioma(
+    nome_completo VARCHAR(256) NOT NULL,
+    idioma VARCHAR(16) NOT NULL,
+    nivel VARCHAR(16),
+    categoria VARCHAR(16),
+    carga_horaria SMALLINT,
+    link_ementa VARCHAR(256),
+
+    PRIMARY KEY (nome_completo, idioma)
+);
+
+
+------------------------ FKS DO GRUPO 12 --------------------
+ALTER TABLE Docente_Especialista 
+ADD CONSTRAINT FK_Usuario
+FOREIGN KEY (CPF_docente) REFERENCES Usuario(CPF)
+ON UPDATE CASCADE;
+
+-- Docente Ministrante 
+
+ALTER TABLE Horarios_Disponiveis_Docente_Ministrante
+ADD CONSTRAINT CPF_docente 
+FOREIGN KEY (CPF_Docente) REFERENCES Docente_Especialista(CPF_docente)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- Docente Autor
+
+ALTER TABLE Docente_Autor_Produz_Material 
+ADD CONSTRAINT CPF_docente
+FOREIGN KEY (CPF_Docente) REFERENCES Docente_Especialista(CPF_Docente)
+ON UPDATE CASCADE;
+
+ALTER TABLE Docente_Autor_Produz_Material 
+ADD CONSTRAINT nome_material
+FOREIGN KEY (nome, data_producao) REFERENCES Material(nome, data_criacao)
+ON UPDATE CASCADE;
+
+-- Docente Orientador
+
+ALTER TABLE Docente_Orientador_Orienta_ProfessorISF
+ADD CONSTRAINT CPF_Docente 
+FOREIGN KEY (CPF_docente) REFERENCES Docente_Especialista(CPF_Docente)
+ON UPDATE CASCADE;
+
+ALTER TABLE Docente_Orientador_Orienta_ProfessorISF
+ADD CONSTRAINT CPF_ProfessorIsf
+FOREIGN KEY (CPF_professorIsf) REFERENCES ProfessorISF(CPF_usuario)
+ON UPDATE CASCADE;
+
+
+/*-------------- FK CONSTRAINTS dos outros grupos ------------------ */
+-- REVISAR DAQUI PRA BAIXO!!
 
 --Gestor Constraints
 
@@ -536,9 +714,10 @@ FOREIGN KEY () REFERENCES Edital(Numero, Ano, Semestre);
 
 --Aluno Especializacao Constraints
 
-ALTER TABLE Aluno_Especializacao
-ADD CONSTRAINT FK_Professor_Isf
-FOREIGN KEY (CPF_Docente_Especialista) REFERENCES Docente_Especialista(CPF);
+-- Removido daqui e adicionado em baixo de professor isf
+--ALTER TABLE Aluno_Especializacao
+--ADD CONSTRAINT FK_Professor_Isf
+--FOREIGN KEY (CPF_Docente_Especialista) REFERENCES Docente_Especialista(CPF);
 
 ALTER TABLE Aluno_Especializacao_Produz_Repositorio
 ADD CONSTRAINT FK_Aluno_Especializacao
@@ -653,8 +832,51 @@ ON UPDATE CASCADE;
 ALTER TABLE componenteCurricularMaterial 
 ADD CONSTRAINT FK_material
 FOREIGN KEY (Nome_material, data) REFERENCES Material(Nome_material, data)
+ON DELETE CASCADE,
+ON UPDATE CASCADE;
+
+-- Professor isf constraints
+ALTER TABLE ProfessorIsF
+ADD CONSTRAINT FK_Usuario_professorIsf
+FOREIGN KEY (CPF_usuario) REFERENCES Usuario(CPF)
+ON DELETE RESTRICT
+ON UPDATE RESTRICT;
+
+ALTER TABLE ProfessorIsf_Idioma
+ADD CONSTRAINT FK_ProfessorIsf_idioma
+FOREIGN KEY (CPF_Professor_IsF) REFERENCES ProfessorIsF(CPF_usuario)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+
+ALTER TABLE ProfessorIsf_Ministra_Turma
+ADD CONSTRAINT FK_ProfessorIsf_Ministra
+FOREIGN KEY (CPF_ProfessorIsF) REFERENCES ProfessorIsF(CPF_usuario)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+ALTER TABLE ProfessorIsf_Ministra_Turma
+ADD CONSTRAINT FK_Turma_Oferta_Coletiva_Ministra
+FOREIGN KEY (Nome_completo_componente, Idioma_turma, Sigla_turma, semestre) REFERENCES Turma_Oferta_Coletiva(Nome_Completo, Idioma, Sigla_Turma, Semestre)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+-- Aluno Graduacao
+
+ALTER TABLE Aluno_Graduacao
+ADD CONSTRAINT FK_ProfessorIsf_Aluno_Graduacao
+FOREIGN KEY (CPF_Aluno_Graduacao) REFERENCES ProfessorIsF(CPF_usuario)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE Edital_Admite_Aluno_Graduacao
+ADD CONSTRAINT FK_Edital_Admite_Aluno_Graduacao_Aluno
+FOREIGN KEY (CPF_aluno) REFERENCES AlunoGraduacao(CPF_Aluno_Graduacao)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+--!!! TODO adicionar constraint da foreign key de edital no tabela adimite
+
+-- Materiais
+-- !!! TODO adicionar relacionamento de docente autor com materiais
 
 --Aluno Oferta Coletiva
 ALTER TABLE Aluno_Oferta_Coletiva
@@ -668,6 +890,11 @@ ADD CONSTRAINT FK_Usuario
 FOREIGN KEY (CPF) REFERENCES Usuario(CPF)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
+
+-- Aluno especializacao com relacao à professor isf
+ALTER TABLE Aluno_Especializacao
+ADD CONSTRAINT FK_Professor_Isf_Aluno_Especializacao
+FOREIGN KEY (CPF_Docente_Especialista) REFERENCES ProfessorIsf(CPF_usuario);
 
 --ALTER TABLE Aluno_Inscreve_Turma_Oferta DROP CONSTRAINT IF EXISTS FK_Aluno_Oferta_Coletiva;
 
