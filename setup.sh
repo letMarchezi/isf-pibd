@@ -6,7 +6,7 @@ sudo apt-get update
 sudo apt-get install -y docker.io
 
 # Add user to the docker group
-sudo usermod -aG docker $USER
+sudo usermod -aG docker vira-tempo
 
 # Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -21,7 +21,7 @@ sudo chown -R 5050:5050 SQL
 sudo groupadd -g 5050 pgadmin
 
 # Add user to the pgadmin group
-sudo usermod -aG 5050 $USER
+sudo usermod -aG 5050 vira-tempo
 
 # makes adds w permission for group members on SQL directory
 sudo chmod -R 775 SQL
