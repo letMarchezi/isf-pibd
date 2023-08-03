@@ -6,7 +6,7 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Add user to the docker group
-sudo usermod -aG docker $USER
+sudo usermod -aG docker vira-tempo
 
 # Make the binary executable
 sudo chmod +x /usr/local/bin/docker-compose
@@ -18,7 +18,7 @@ sudo chown -R 5050:5050 SQL
 sudo groupadd -g 5050 pgadmin
 
 # Add user to the pgadmin group
-sudo usermod -aG 5050 $USER
+sudo usermod -aG 5050 vira-tempo
 
 # makes adds w permission for group members on SQL directory
 sudo chmod -R 775 SQL
