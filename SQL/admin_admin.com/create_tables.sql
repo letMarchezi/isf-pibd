@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS IES (
     doc_politica_ling VARCHAR(255),
     campus VARCHAR(100),
     nome_principal VARCHAR(100),
+
   	FOREIGN KEY (CEP_IES) REFERENCES CepEndereco(CEP)
 );
 
@@ -46,6 +47,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
   	complemento VARCHAR(100),
   	CEP_usuario VARCHAR(8),
   	CNPJ_IES_associada VARCHAR(20),
+
   	FOREIGN KEY (CEP_usuario) REFERENCES CepEndereco(CEP),
   	FOREIGN KEY (CNPJ_IES_associada) REFERENCES IES(CNPJ)
 );
@@ -92,6 +94,7 @@ CREATE TABLE IF NOT EXISTS Parceiro(
     CEP_parceiro VARCHAR(8),
     numero DECIMAL(5),
     complemento VARCHAR(100),
+
     FOREIGN KEY (CEP_parceiro) REFERENCES CepEndereco(CEP)
 );
 
@@ -105,19 +108,21 @@ CREATE TABLE IF NOT EXISTS TelefoneParceiro(
   	FOREIGN KEY (CNPJ_parceiro) REFERENCES Parceiro(CNPJ)
 );
 
-
 /* GESTOR */
 CREATE TABLE IF NOT EXISTS GestorRedeAndifes (
     CPF_gestor VARCHAR(11) NOT NULL PRIMARY KEY,
     data_cadastro DATE,
+
   	FOREIGN KEY (CPF_gestor) REFERENCES Usuario(CPF)
 );
 
 CREATE TABLE IF NOT EXISTS GestorAnalisaParceiro(
     CPF_gestor VARCHAR(11) NOT NULL,
     CNPJ_parceiro VARCHAR(14) NOT NULL,
-    status_ VARCHAR(100), -- pq 100 pro status? 
+    status_ VARCHAR(20),  
     data_analise DATE,
+
+    CHECK(status_ in ('APROVADO', 'REPROVADO')),
 
     PRIMARY KEY (CPF_gestor, CNPJ_parceiro),
     FOREIGN KEY (CPF_gestor) REFERENCES GestorRedeAndifes(CPF_gestor),
@@ -140,10 +145,10 @@ CREATE TABLE IF NOT EXISTS GestorAprovaCoordAdm (
 
 /* EDITAL */
 CREATE TABLE IF NOT EXISTS Edital(
-    ID_edital INTEGER UNIQUE,      -- surrogate
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER,      
+    numero DECIMAL(30) NOT NULL,
+    ano DECIMAL(4) NOT NULL,
+    semestre DECIMAL(1) NOT NULL,
     data_publicacao DATE,
     data_inicio DATE,
     data_fim DATE,
@@ -151,74 +156,48 @@ CREATE TABLE IF NOT EXISTS Edital(
     nome VARCHAR(100) NOT NULL,
 
     CHECK(data_inicio < data_fim), 
-
-    PRIMARY KEY (ID_edital)
-    -- PRIMARY KEY (numero, ano, semestre)
+    PRIMARY KEY (ID_edital),
+    UNIQUE (numero, ano, semestre)
 );
 
--- DROP TABLE IF EXISTS EditalOfertaColetiva;
-
 CREATE TABLE IF NOT EXISTS EditalOfertaColetiva(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER,      
     max_alunos_turma  DECIMAL(4),
     max_alunos_lista_espera  DECIMAL(4),
     max_vagas_reservadas_turma DECIMAL(3),
     
     PRIMARY KEY(ID_edital),
-    -- PRIMARY KEY (numero, ano, semestre),
-    -- FOREIGN KEY (numero, ano, semestre, ID_edital) REFERENCES Edital(numero, ano, semestre, ID_edital)
     FOREIGN KEY (ID_edital) REFERENCES Edital(ID_edital)
 
 );
 
 CREATE TABLE IF NOT EXISTS IdiomasEditalOfertaColetiva(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER,      
     idioma VARCHAR(50) NOT NULL,
 
     PRIMARY KEY (ID_edital, idioma),
-    -- PRIMARY KEY (numero, ano, semestre, idioma),
     FOREIGN KEY (ID_edital) REFERENCES EditalOfertaColetiva(ID_edital)
 );
 
 CREATE TABLE IF NOT EXISTS EditalCredEspecialista(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER,     
 
     PRIMARY KEY (ID_edital),
-    -- PRIMARY KEY (numero, ano, semestre),
     FOREIGN KEY (ID_edital) REFERENCES Edital(ID_edital)
 );
--- CREATE TABLE IF NOT EXISTS EditalAdmiteDocenteEspecialista   ->> passada para depois de docente especialista
-
 
 CREATE TABLE IF NOT EXISTS EditalCredProfessorIsf(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER,      
 
     PRIMARY KEY (ID_edital),
-    -- PRIMARY KEY (numero, ano, semestre),
     FOREIGN KEY (ID_edital) REFERENCES Edital(ID_edital)
 );
 
 CREATE TABLE IF NOT EXISTS EditalAlunoEspecializacao(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER,      
     quantidade_vagas DECIMAL(4),
 
     PRIMARY KEY (ID_edital),
-    -- PRIMARY KEY (numero, ano, semestre),
     FOREIGN KEY (ID_edital) REFERENCES Edital(ID_edital)
 );
 
@@ -260,8 +239,8 @@ CREATE TABLE IF NOT EXISTS AlunoEspecializacao(
     data_ingresso DATE,
     data_conclusao DATE,
     diploma_file VARCHAR(255),
-    CHECK(data_ingresso < data_conclusao),
 
+    CHECK(data_ingresso < data_conclusao),
     PRIMARY KEY (CPF_aluno_especializacao),
     FOREIGN KEY (CPF_aluno_especializacao) REFERENCES ProfessorIsf(CPF_professor_isf)
 );
@@ -278,16 +257,15 @@ CREATE TABLE IF NOT EXISTS AlunoEspecializacaoProduzRepositorio(
 
 /* MATERIAIS */
 CREATE TABLE IF NOT EXISTS Material(
-    ID_material INTEGER,            -- surrogate
+    ID_material INTEGER,            
     nome VARCHAR(50),
     data_criacao DATE,
     arquivo VARCHAR(256),
     link VARCHAR(256),
-    status VARCHAR(10),
     tipo_material VARCHAR(10),
 
-    PRIMARY KEY (ID_material)
-    -- PRIMARY KEY (nome, data_criacao)
+    PRIMARY KEY (ID_material),
+    UNIQUE (nome, data_criacao)
 );
 
 /* COMPONENTE CURRICULAR */
@@ -321,13 +299,10 @@ CREATE TABLE IF NOT EXISTS TipoComponenteCurricular(
 );
 
 CREATE TABLE IF NOT EXISTS MaterialComponenteCurricular(
-    ID_material INTEGER,            -- surrogate de material
-    nome_componente VARCHAR(100) UNIQUE NOT NULL,
-    nome_material VARCHAR(100) UNIQUE NOT NULL,   
-    data_material TIMESTAMP,
+    ID_material INTEGER,            
+    nome_componente VARCHAR(100) NOT NULL,
 
     PRIMARY KEY (nome_componente, ID_material),
-    -- PRIMARY KEY (nome_componente, nome_material, data_material),
     FOREIGN KEY (nome_componente) REFERENCES ComponenteCurricular(nome_componente)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
@@ -337,23 +312,21 @@ CREATE TABLE IF NOT EXISTS MaterialComponenteCurricular(
 );
 
 CREATE TABLE IF NOT EXISTS DependenciasComponenteCurricular(
-    idioma_componente_requisito VARCHAR(100),
     nome_componente_requisito VARCHAR(100),
-    idioma_componente_nao_requisito VARCHAR(100),
-    nome_componente_nao_requisito VARCHAR(100),
+    nome_componente VARCHAR(100),
 
-    PRIMARY KEY (idioma_componente_requisito, nome_componente_requisito, idioma_componente_nao_requisito, nome_componente_nao_requisito),
+    PRIMARY KEY (nome_componente_requisito, nome_componente),
     FOREIGN KEY (nome_componente_requisito) REFERENCES ComponenteCurricular(nome_componente)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (nome_componente_nao_requisito) REFERENCES ComponenteCurricular(nome_componente)
+    FOREIGN KEY (nome_componente) REFERENCES ComponenteCurricular(nome_componente)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
 /* TURMA ESPECIALIZACAO */
 CREATE TABLE IF NOT EXISTS TurmaEspecializacao(
-    ID_turma_especializacao INTEGER,        -- surrogate
+    ID_turma_especializacao INTEGER,        
     nome_componente VARCHAR(100) NOT NULL,
     sigla VARCHAR(15) NOT NULL,
     semestre DECIMAL(1) NOT NULL,
@@ -365,46 +338,40 @@ CREATE TABLE IF NOT EXISTS TurmaEspecializacao(
     CHECK (hora_inicio < hora_fim),
 
     PRIMARY KEY (ID_turma_especializacao),
-    -- PRIMARY KEY(nome_componente, sigla, semestre),
+    UNIQUE (nome_componente, sigla, semestre),
     FOREIGN KEY (nome_componente) REFERENCES ComponenteCurricular (nome_componente)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS DiasTurmaEspecializacao(
-    ID_turma_especializacao INTEGER,        -- surrogate de TurmaEspecializacao
+    ID_turma_especializacao INTEGER,        
     dia_da_semana VARCHAR(3) NOT NULL,
-    nome_componente VARCHAR(100) UNIQUE NOT NULL,
-    sigla VARCHAR(15) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
 
-    PRIMARY KEY(ID_turma_especializacao, dia_da_semana),
-    -- PRIMARY KEY(dia_da_semana, nome_componente, sigla, semestre),
+    PRIMARY KEY (ID_turma_especializacao, dia_da_semana),
     FOREIGN KEY (ID_turma_especializacao) REFERENCES TurmaEspecializacao (ID_turma_especializacao)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS AlunoEspecializacaoCursaTurma(
-    ID_turma_especializacao INTEGER,        -- surrogate de TurmaEspecializacao
+    ID_turma_especializacao INTEGER,     
     CPF_aluno VARCHAR(11) NOT NULL,
-    nome_componente VARCHAR(100) UNIQUE NOT NULL,
-    sigla VARCHAR(15) NOT NULL,
-    semestre DECIMAL(1) NOT NULL, 
-    situacao_aluno INTEGER, --Separar algo tipo 0 - cursando, 1 - aprovado, 2 - reprovado etc
+    situacao_aluno VARCHAR(20),
     frequencia DECIMAL(3),
+
+    CHECK(situacao_aluno IN ('APROVADO', 'REPROVADO', 'CURSANDO', 'CANCELADO')),
 
     CHECK(Frequencia > 0 AND Frequencia < 100), 
 
     PRIMARY KEY (CPF_aluno, ID_turma_especializacao),
-    -- PRIMARY KEY (CPF_aluno, nome_componente, sigla, semestre),
     FOREIGN KEY (CPF_aluno) REFERENCES AlunoEspecializacao(CPF_aluno_especializacao),
     FOREIGN KEY (ID_turma_especializacao) REFERENCES TurmaEspecializacao(ID_turma_especializacao)
 
 );
 
 CREATE TABLE IF NOT EXISTS AtividadesAlunoEspecializacao(
-    ID_turma_especializacao INTEGER,        -- surrogate de TurmaEspecializacao
+    ID_turma_especializacao INTEGER,        
     CPF_aluno VARCHAR(11) NOT NULL,
     nome_componente VARCHAR(100) NOT NULL,
     sigla VARCHAR(15) NOT NULL,
@@ -412,34 +379,31 @@ CREATE TABLE IF NOT EXISTS AtividadesAlunoEspecializacao(
 
     atividade VARCHAR(40) NOT NULL,
 
-    nota DECIMAL(2, 2),
+    nota DECIMAL(4, 2),
 
     CHECK(nota >= 0 AND nota <= 10),
 
-    PRIMARY KEY (CPF_aluno, atividade),
+    PRIMARY KEY (CPF_aluno, atividade, ID_turma_especializacao),
     FOREIGN KEY (CPF_aluno, ID_turma_especializacao) REFERENCES AlunoEspecializacaoCursaTurma(CPF_aluno, ID_turma_especializacao)
 );
 
-CREATE TABLE CursoIdioma(
-    ID_curso_idioma INTEGER,        -- surrogate
-    nome_completo VARCHAR(256) NOT NULL UNIQUE,
-    idioma VARCHAR(16) NOT NULL UNIQUE,
+CREATE TABLE IF NOT EXISTS CursoIdioma(
+    ID_curso_idioma INTEGER,  
+    nome_completo VARCHAR(256) NOT NULL,
+    idioma VARCHAR(16) NOT NULL,
     nivel VARCHAR(16),
     categoria VARCHAR(16),
     carga_horaria SMALLINT,
     link_ementa VARCHAR(256),
 
-    PRIMARY KEY (ID_curso_idioma)
-    -- PRIMARY KEY (nome_completo, idioma)
+    PRIMARY KEY (ID_curso_idioma),
+    UNIQUE (nome_completo, idioma)
 );
 
 /* OFERTA COLETIVA */ 
 CREATE TABLE IF NOT EXISTS TurmaOfertaColetiva(
-    ID_turma_coletiva INTEGER,  -- surrogate de turmaOfertaColetiva
-    ID_curso_idioma INTEGER UNIQUE NOT NULL,        -- surrogate de cursoIdioma
-
-    nome_completo VARCHAR(20) NOT NULL UNIQUE,
-    idioma VARCHAR(20) NOT NULL UNIQUE,
+    ID_turma_coletiva INTEGER,  
+    ID_curso_idioma INTEGER NOT NULL,        
 
     sigla_turma VARCHAR(10) NOT NULL,
     semestre DECIMAL(1) NOT NULL,
@@ -448,63 +412,40 @@ CREATE TABLE IF NOT EXISTS TurmaOfertaColetiva(
     hora_inicio TIMESTAMP,
     hora_fim TIMESTAMP,
     qtde_vagas DECIMAL(4),
-    --Qtde_Reprovados DECIMAL(4), 
-    --Qtde_Desistentes DECIMAL(4),
-    --Qtde_Concluintes DECIMAL(4), -> acho que atributos derivados nao vao na tabela 
-    --Qtde_Inscritos DECIMAL(4),
-    --Qtde_Evadidos DECIMAL(4),
 
     CHECK (hora_inicio < hora_fim),
 
     PRIMARY KEY (ID_turma_coletiva),
-    FOREIGN KEY (ID_turma_coletiva) REFERENCES CursoIdioma(ID_curso_idioma),
-    --PRIMARY KEY (nome_completo, idioma, sigla_turma, semestre),
+    UNIQUE (sigla_turma, semestre, ID_curso_idioma),
     FOREIGN KEY (ID_curso_idioma) REFERENCES CursoIdioma(ID_curso_idioma)
 );
 
 CREATE TABLE IF NOT EXISTS DiasTurmaOfertaColetiva(
-    ID_turma_coletiva INTEGER,  -- surrogate de TurmaOfertaColetiva 
+    ID_turma_coletiva INTEGER,   
     dia_da_semana VARCHAR(3) NOT NULL,
-    nome_completo VARCHAR(100) NOT NULL UNIQUE,
-    idioma VARCHAR(20) NOT NULL UNIQUE,
-    sigla_turma VARCHAR(15) NOT NULL UNIQUE,
-    semestre DECIMAL(1) NOT NULL UNIQUE,
 
     PRIMARY KEY (ID_turma_coletiva),
-    -- PRIMARY KEY(dia_da_semana, nome_completo, idioma, sigla_turma, semestre),
     FOREIGN KEY (ID_turma_coletiva) REFERENCES TurmaOfertaColetiva(ID_turma_coletiva)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS RepositorioTurma(
-    ID_turma_coletiva INTEGER,  -- surrogate de TurmaOfertaColetiva 
-    nome_turma_ofertada VARCHAR(20) NOT NULL UNIQUE,
-    idioma_turma_ofertada VARCHAR(20) NOT NULL UNIQUE,
-    sigla_turma_ofertada VARCHAR(10) NOT NULL UNIQUE,
-    semestre_turma_ofertada DECIMAL(1) NOT NULL UNIQUE,
-
-    titulo_repositorio VARCHAR(20) NOT NULL,
-
+    ID_turma_coletiva INTEGER,   
+    titulo_repositorio VARCHAR(100) NOT NULL,
     foi_aprovado_pelo_orientador BOOLEAN,
 
     PRIMARY KEY (titulo_repositorio, ID_turma_coletiva),
-    -- PRIMARY KEY (nome_turma_ofertada, idioma_turma_ofertada, sigla_turma_ofertada, semestre_turma_ofertada, titulo_repositorio),
     FOREIGN KEY (titulo_repositorio) REFERENCES Repositorio (titulo),
     FOREIGN KEY (ID_turma_coletiva) REFERENCES TurmaOfertaColetiva(ID_turma_coletiva)
 );
 
 CREATE TABLE IF NOT EXISTS ProfessorIsfMinistraTurma(
-    ID_turma_coletiva INTEGER,  -- surrogate de TurmaOfertaColetiva 
+    ID_turma_coletiva INTEGER, 
     CPF_professor_isf VARCHAR(11),
-    nome_curso VARCHAR(50) UNIQUE NOT NULL,   -- Os tamanho do varchar dependem da entidade turma
-    idioma_turma VARCHAR(20) UNIQUE NOT NULL,            -- !
-    sigla_turma VARCHAR(10) UNIQUE NOT NULL,            -- !
-    semestre DECIMAL(1) UNIQUE NOT NULL,
     foi_validado_pelo_orientador BOOLEAN,
 
     PRIMARY KEY(CPF_professor_isf, ID_turma_coletiva),
-    -- PRIMARY KEY(CPF_professor_isf, nome_curso, idioma_turma, sigla_turma, semestre),
     FOREIGN KEY (ID_turma_coletiva) REFERENCES TurmaOfertaColetiva(ID_turma_coletiva)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
@@ -527,14 +468,10 @@ CREATE TABLE IF NOT EXISTS AlunoGraduacao(
 );
 
 CREATE TABLE IF NOT EXISTS EditalAdmiteAlunoGraduacao(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero_edital DECIMAL(30) NOT NULL,
-    ano_edital DECIMAL(4) NOT NULL,
-    semestre_edital DECIMAL(1) NOT NULL,
+    ID_edital INTEGER,     
     CPF_aluno VARCHAR (11),
 
     PRIMARY KEY (ID_edital, CPF_aluno),
-    -- PRIMARY KEY (numero_edital, ano_edital, semestre_edital, CPF_aluno),
     FOREIGN KEY (ID_edital) REFERENCES Edital(ID_edital),
     FOREIGN KEY (CPF_aluno) REFERENCES AlunoGraduacao(CPF_aluno_graduacao)
         ON DELETE CASCADE
@@ -565,22 +502,18 @@ CREATE TABLE IF NOT EXISTS IdiomaAlunoOfertaColetiva (
 );
 
 CREATE TABLE IF NOT EXISTS AlunoInscreveTurmaOferta(
-    ID_turma_coletiva INTEGER,  -- surrogate de TurmaOfertaColetiva 
+    ID_turma_coletiva INTEGER,  
     CPF_aluno VARCHAR(11) NOT NULL,
-    idioma VARCHAR(20) NOT NULL,
-    nome_turma VARCHAR(20) UNIQUE NOT NULL ,
-    sigla_turma VARCHAR(10) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
-
     data_inscricao TIMESTAMP NOT NULL,
 
     posicao_lista DECIMAL(5),
     situacao_inscricao INTEGER,
     data_matricula TIMESTAMP,
-    situacao_matricula VARCHAR(15),
+    situacao_matricula VARCHAR(20),
+
+    CHECK(situacao_matricula IN ('MATRICULADO', 'EM ESPERA', 'INDEFERIDO')),
 
     PRIMARY KEY (CPF_aluno, ID_turma_coletiva),
-    -- PRIMARY KEY (CPF_aluno, nome_turma, idioma, sigla_Turma, semestre),
     FOREIGN KEY (CPF_aluno) REFERENCES AlunoOfertaColetiva(CPF_aluno)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
@@ -588,6 +521,8 @@ CREATE TABLE IF NOT EXISTS AlunoInscreveTurmaOferta(
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
 );
+
+/* DOCENTE ESPECIALISTA */
 
 CREATE TABLE IF NOT EXISTS DocenteEspecialista(
     CPF_docente VARCHAR(11),
@@ -614,26 +549,19 @@ CREATE TABLE IF NOT EXISTS DocenteEspecialista(
 );
 
 CREATE TABLE IF NOT EXISTS EditalAdmiteDocenteEspecialista(
-    ID_edital INTEGER,      -- surrogate de Edital
-    numero DECIMAL(30) UNIQUE NOT NULL,
-    ano DECIMAL(4) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
+    ID_edital INTEGER, 
     CPF_docente_especialista VARCHAR(11) NOT NULL,
 
     PRIMARY KEY (ID_edital, CPF_docente_especialista),
-    -- PRIMARY KEY (numero, ano, semestre, CPF_docente_especialista),
     FOREIGN KEY (ID_edital) REFERENCES Edital(ID_edital),
     FOREIGN KEY (CPF_docente_especialista) REFERENCES DocenteEspecialista(CPF_docente)
 );
 
 CREATE TABLE IF NOT EXISTS DocenteAutorProduzMaterial(
-    ID_material INTEGER,            -- surrogate de material
+    ID_material INTEGER, 
     CPF_docente VARCHAR(11),
-    nome VARCHAR(128) UNIQUE NOT NULL,
-    data_producao DATE NOT NULL,
 
     PRIMARY KEY (CPF_docente, ID_material),
-    -- PRIMARY KEY (CPF_docente, nome, data_producao),
     FOREIGN KEY (ID_material) REFERENCES Material(ID_material)
         ON UPDATE CASCADE,
     FOREIGN KEY (CPF_docente) REFERENCES DocenteEspecialista(CPF_docente)
@@ -651,17 +579,13 @@ CREATE TABLE IF NOT EXISTS HorariosDisponiveisDocenteMinistrante(
 );
 
 CREATE TABLE IF NOT EXISTS DocenteMinistranteLecionaTurmaEspecializacao(
-    ID_turma_especializacao INTEGER,        -- surrogate de TurmaEspecializacao
+    ID_turma_especializacao INTEGER,        
     CPF_docente VARCHAR(11) NOT NULL,
-    nome_componente VARCHAR(100) UNIQUE NOT NULL,
-    sigla VARCHAR(15) UNIQUE NOT NULL,
-    semestre DECIMAL(1) UNIQUE NOT NULL,
 
     PRIMARY KEY (ID_turma_especializacao, CPF_docente),
     FOREIGN KEY (ID_turma_especializacao) REFERENCES TurmaEspecializacao(ID_turma_especializacao)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT,
-
     FOREIGN KEY (CPF_docente) REFERENCES DocenteEspecialista(CPF_docente)
         ON UPDATE CASCADE
         ON DELETE CASCADE
