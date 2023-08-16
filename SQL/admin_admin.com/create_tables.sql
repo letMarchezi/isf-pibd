@@ -15,15 +15,15 @@ CREATE TABLE IF NOT EXISTS IES (
     tem_lab_mais_unidos BOOLEAN,
     possui_nucleo_ativo BOOLEAN,
     CEP_IES VARCHAR(8),
-  	numero INTEGER,
-  	complemento VARCHAR(100),
+    numero INTEGER,
+    complemento VARCHAR(100),
     link_politica_ling VARCHAR(255),
     data_politica_ling DATE,
     doc_politica_ling VARCHAR(255),
     campus VARCHAR(100),
     nome_principal VARCHAR(100),
 
-  	FOREIGN KEY (CEP_IES) REFERENCES CepEndereco(CEP)
+    FOREIGN KEY (CEP_IES) REFERENCES CepEndereco(CEP)
 );
 
 CREATE TABLE IF NOT EXISTS TelefoneIES (
@@ -38,18 +38,18 @@ CREATE TABLE IF NOT EXISTS TelefoneIES (
 
 /* USUÁRIO */
 CREATE TABLE IF NOT EXISTS Usuario (
-	CPF VARCHAR(11) NOT NULL PRIMARY KEY,
-  	primeiro_nome VARCHAR(50) NOT NULL,
-  	sobrenome VARCHAR(50) NOT NULL,
-  	genero VARCHAR(20),
-  	data_nascimento DATE NOT NULL,
-  	numero INTEGER,
-  	complemento VARCHAR(100),
-  	CEP_usuario VARCHAR(8),
-  	CNPJ_IES_associada VARCHAR(20),
+  CPF VARCHAR(11) NOT NULL PRIMARY KEY,
+    primeiro_nome VARCHAR(50) NOT NULL,
+    sobrenome VARCHAR(50) NOT NULL,
+    genero VARCHAR(20),
+    data_nascimento DATE NOT NULL,
+    numero INTEGER,
+    complemento VARCHAR(100),
+    CEP_usuario VARCHAR(8),
+    CNPJ_IES_associada VARCHAR(20),
 
-  	FOREIGN KEY (CEP_usuario) REFERENCES CepEndereco(CEP),
-  	FOREIGN KEY (CNPJ_IES_associada) REFERENCES IES(CNPJ)
+    FOREIGN KEY (CEP_usuario) REFERENCES CepEndereco(CEP),
+    FOREIGN KEY (CNPJ_IES_associada) REFERENCES IES(CNPJ)
 );
 
 CREATE TABLE IF NOT EXISTS TelefoneUsuario (
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS TelefoneUsuario (
     numero VARCHAR(15) NOT NULL,
 
     PRIMARY KEY (CPF_usuario, DDI, DDD, numero),
-  	FOREIGN KEY (CPF_usuario) REFERENCES Usuario(CPF)
+    FOREIGN KEY (CPF_usuario) REFERENCES Usuario(CPF)
 );
 
 /* COORDENADOR ADMINISTRATIVO */
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS TelefoneParceiro(
     numero DECIMAL(9) NOT NULL,
 
     PRIMARY KEY (CNPJ_Parceiro, DDI, DDD, numero),
-  	FOREIGN KEY (CNPJ_parceiro) REFERENCES Parceiro(CNPJ)
+    FOREIGN KEY (CNPJ_parceiro) REFERENCES Parceiro(CNPJ)
 );
 
 /* GESTOR */
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS GestorRedeAndifes (
     CPF_gestor VARCHAR(11) NOT NULL PRIMARY KEY,
     data_cadastro DATE,
 
-  	FOREIGN KEY (CPF_gestor) REFERENCES Usuario(CPF)
+    FOREIGN KEY (CPF_gestor) REFERENCES Usuario(CPF)
 );
 
 CREATE TABLE IF NOT EXISTS GestorAnalisaParceiro(
@@ -238,6 +238,7 @@ CREATE TABLE IF NOT EXISTS AlunoEspecializacao(
     titulacao VARCHAR(40) NOT NULL,
     data_ingresso DATE,
     data_conclusao DATE,
+    matricula_ativa BOOLEAN,
     diploma_file VARCHAR(255),
 
     CHECK(data_ingresso < data_conclusao),
@@ -460,6 +461,7 @@ CREATE TABLE IF NOT EXISTS AlunoGraduacao(
     termo_compromisso_file VARCHAR(256),
     vinculo_file VARCHAR(256),
     POCA_file VARCHAR(256),
+    matricula_ativa BOOLEAN,
 
     PRIMARY KEY(CPF_aluno_graduacao),
     FOREIGN KEY (CPF_aluno_graduacao) REFERENCES ProfessorIsf(CPF_professor_isf)
@@ -502,24 +504,37 @@ CREATE TABLE IF NOT EXISTS IdiomaAlunoOfertaColetiva (
 );
 
 CREATE TABLE IF NOT EXISTS AlunoInscreveTurmaOferta(
+    ID_inscricao INTEGER,
     ID_turma_coletiva INTEGER,  
     CPF_aluno VARCHAR(11) NOT NULL,
     data_inscricao TIMESTAMP NOT NULL,
-
     posicao_lista DECIMAL(5),
-    situacao_inscricao INTEGER,
-    data_matricula TIMESTAMP,
-    situacao_matricula VARCHAR(20),
+    situacao_inscricao VARCHAR(20),
+  
+    CHECK(situacao_inscricao IN ('CONVOCADO', 'EM ESPERA', 'INDEFERIDO')),
 
-    CHECK(situacao_matricula IN ('MATRICULADO', 'EM ESPERA', 'INDEFERIDO')),
-
-    PRIMARY KEY (CPF_aluno, ID_turma_coletiva),
+    PRIMARY KEY (ID_inscricao),
     FOREIGN KEY (CPF_aluno) REFERENCES AlunoOfertaColetiva(CPF_aluno)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
     FOREIGN KEY (ID_turma_coletiva) REFERENCES TurmaOfertaColetiva (ID_turma_coletiva)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
+);
+
+
+CREATE TABLE IF NOT EXISTS AlunoMatriculaTurmaOferta(
+    ID_inscricao INTEGER,
+    data_matricula TIMESTAMP,
+    situacao_matricula VARCHAR(20),
+
+    CHECK(situacao_matricula IN ('CONCLUINTE', 'REPROVADO', 'EVADIDO', 'CURSANDO','DESISTENTE')),
+
+    PRIMARY KEY (ID_inscricao),
+    FOREIGN KEY (ID_inscricao) REFERENCES AlunoInscreveTurmaOferta(ID_inscricao)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+
 );
 
 /* DOCENTE ESPECIALISTA */
