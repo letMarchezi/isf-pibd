@@ -581,180 +581,40 @@ CREATE TABLE IF NOT EXISTS docente_autor_produz_material(
     FOREIGN KEY (cpf_docente) REFERENCES docente_especialista(cpf_docente)
 );
 
-CREATE TABLE IF NOT EXISTS docente_ministra_turma_oferta(
-    id_turma_coletiva INTEGER, 
-    cpf_docente VARCHAR(11),
+CREATE TABLE IF NOT EXISTS horarios_disponiveis_docente_ministrante(
+    CPF_docente VARCHAR(11) NOT NULL,
+    horario_disponivel TIME NOT NULL,
 
-    PRIMARY KEY (cpf_docente, id_turma_coletiva),
-    FOREIGN KEY (id_turma_coletiva) REFERENCES turma_oferta_coletiva(id_turma_coletiva)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    FOREIGN KEY (cpf_docente) REFERENCES docente_especialista(cpf_docente)
-);
-
-/* COORDENADOR PEDAGÓGICO */
-
-CREATE TABLE IF NOT EXISTS coordenador_pedagogico(
-    cpf_coordenador_pedagogico VARCHAR(11),
-    data_credenciamento DATE,
-    curriculo VARCHAR(256),
-    titulacao VARCHAR(16),
-    poca_file VARCHAR(255),
-    vinculo_file VARCHAR(255),
-    link_cnpq VARCHAR(255),
-
-    PRIMARY KEY(cpf_coordenador_pedagogico),
-    FOREIGN KEY (cpf_coordenador_pedagogico) REFERENCES usuario(cpf)
+    PRIMARY KEY (CPF_Docente, horario_disponivel),
+    FOREIGN KEY (CPF_docente) REFERENCES docente_especialista(CPF_docente)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS edital_admite_coordenador_pedagogico(
-    id_edital INTEGER, 
-    cpf_coordenador_pedagogico VARCHAR(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS docente_ministrante_leciona_turma_especializacao(
+    ID_turma_especializacao INTEGER,        
+    CPF_docente VARCHAR(11) NOT NULL,
 
-    PRIMARY KEY (id_edital, cpf_coordenador_pedagogico),
-    FOREIGN KEY (id_edital) REFERENCES edital(id_edital),
-    FOREIGN KEY (cpf_coordenador_pedagogico) REFERENCES coordenador_pedagogico(cpf_coordenador_pedagogico)
-);
-
-CREATE TABLE IF NOT EXISTS coordenador_pedagogico_coordena_turma(
-    id_turma_coletiva INTEGER, 
-    cpf_coordenador_pedagogico VARCHAR(11),
-
-    PRIMARY KEY (cpf_coordenador_pedagogico, id_turma_coletiva),
-    FOREIGN KEY (id_turma_coletiva) REFERENCES turma_oferta_coletiva(id_turma_coletiva)
+    PRIMARY KEY (ID_turma_especializacao, CPF_docente),
+    FOREIGN KEY (ID_turma_especializacao) REFERENCES turma_especializacao(ID_turma_especializacao)
         ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    FOREIGN KEY (cpf_coordenador_pedagogico) REFERENCES coordenador_pedagogico(cpf_coordenador_pedagogico)
-);
-
-/* MENTOR ACADÊMICO */
-CREATE TABLE IF NOT EXISTS mentor_academico(
-    cpf_mentor_academico VARCHAR(11),
-    data_credenciamento DATE,
-    curriculo VARCHAR(256),
-    titulacao VARCHAR(16),
-    vinculo_file VARCHAR(255),
-    poca_file VARCHAR(255),
-    link_cnpq VARCHAR(255),
-
-    PRIMARY KEY(cpf_mentor_academico),
-    FOREIGN KEY (cpf_mentor_academico) REFERENCES usuario(cpf)
+        ON UPDATE RESTRICT,
+    FOREIGN KEY (CPF_docente) REFERENCES docente_especialista(CPF_docente)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS edital_admite_mentor_academico(
-    id_edital INTEGER, 
-    cpf_mentor_academico VARCHAR(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS docente_orientador_orienta_professorIsf(
+    CPF_docente VARCHAR(11) NOT NULL,
+    CPF_professor_isf VARCHAR(11) NOT NULL,
+    data_inicio TIMESTAMP NOT NULL,
+    data_fim TIMESTAMP,
 
-    PRIMARY KEY (id_edital, cpf_mentor_academico),
-    FOREIGN KEY (id_edital) REFERENCES edital(id_edital),
-    FOREIGN KEY (cpf_mentor_academico) REFERENCES mentor_academico(cpf_mentor_academico)
-);
-
-/* COMENTÁRIO */
-CREATE TABLE IF NOT EXISTS comentario(
-    id_comentario INTEGER,
-    id_material INTEGER,
-    cpf_autor VARCHAR(11),
-
-    texto_comentario TEXT,
-    data_comentario TIMESTAMP,
-
-    PRIMARY KEY (id_comentario),
-    FOREIGN KEY (id_material) REFERENCES material(id_material),
-    FOREIGN KEY (cpf_autor) REFERENCES usuario(cpf)
-);
-
-/* RESPOSTA COMENTÁRIO */
-CREATE TABLE IF NOT EXISTS resposta_comentario(
-    id_resposta_comentario INTEGER,
-    id_comentario INTEGER,
-    cpf_autor VARCHAR(11),
-
-    texto_resposta_comentario TEXT,
-    data_resposta_comentario TIMESTAMP,
-
-    PRIMARY KEY (id_resposta_comentario),
-    FOREIGN KEY (id_comentario) REFERENCES comentario(id_comentario),
-    FOREIGN KEY (cpf_autor) REFERENCES usuario(cpf)
-);
-
-/* PARTICIPAÇÃO COMPONENTE */
-CREATE TABLE IF NOT EXISTS participacao_componente(
-    cpf_aluno VARCHAR(11),
-    nome_componente VARCHAR(100),
-    semestre DECIMAL(1),
-    ano DECIMAL(4),
-    carga_horaria_pratica TIME,
-    carga_horaria_teorica TIME,
-
-    PRIMARY KEY (cpf_aluno, nome_componente, semestre, ano),
-    FOREIGN KEY (cpf_aluno) REFERENCES aluno_especializacao(cpf_aluno_especializacao),
-    FOREIGN KEY (nome_componente) REFERENCES componente_curricular(nome_componente)
-);
-
-/* CERTIFICADO */
-CREATE TABLE IF NOT EXISTS certificado(
-    id_certificado INTEGER,
-    cpf_aluno VARCHAR(11),
-    nome_curso VARCHAR(100),
-    carga_horaria DECIMAL(5),
-    data_emissao DATE,
-    arquivo_certificado VARCHAR(256),
-
-    PRIMARY KEY (id_certificado),
-    FOREIGN KEY (cpf_aluno) REFERENCES aluno_especializacao(cpf_aluno_especializacao)
-);
-
-/* EVENTO */
-CREATE TABLE IF NOT EXISTS evento(
-    id_evento INTEGER,
-    nome_evento VARCHAR(100),
-    data_evento DATE,
-    local_evento VARCHAR(100),
-    descricao_evento TEXT,
-
-    PRIMARY KEY (id_evento)
-);
-
-CREATE TABLE IF NOT EXISTS participacao_evento(
-    id_evento INTEGER,
-    cpf_aluno VARCHAR(11),
-    PRIMARY KEY (id_evento, cpf_aluno),
-    FOREIGN KEY (id_evento) REFERENCES evento(id_evento),
-    FOREIGN KEY (cpf_aluno) REFERENCES aluno_especializacao(cpf_aluno_especializacao)
-);
-
-/* COLABORADOR EXTERNO */
-CREATE TABLE IF NOT EXISTS colaborador_externo(
-    cpf_colaborador VARCHAR(11),
-    nome_colaborador VARCHAR(100),
-    vinculo_inst_externa VARCHAR(100),
-    email_colaborador VARCHAR(100),
-
-    PRIMARY KEY (cpf_colaborador)
-);
-
-CREATE TABLE IF NOT EXISTS palestra(
-    id_palestra INTEGER,
-    cpf_colaborador VARCHAR(11),
-    titulo_palestra VARCHAR(100),
-    data_palestra DATE,
-    local_palestra VARCHAR(100),
-    descricao_palestra TEXT,
-
-    PRIMARY KEY (id_palestra),
-    FOREIGN KEY (cpf_colaborador) REFERENCES colaborador_externo(cpf_colaborador)
-);
-
-CREATE TABLE IF NOT EXISTS participacao_palestra(
-    id_palestra INTEGER,
-    cpf_aluno VARCHAR(11),
-
-    PRIMARY KEY (id_palestra, cpf_aluno),
-    FOREIGN KEY (id_palestra) REFERENCES palestra(id_palestra),
-    FOREIGN KEY (cpf_aluno) REFERENCES aluno_especializacao(cpf_aluno_especializacao)
+    PRIMARY KEY (CPF_docente, CPF_professor_isf, data_inicio),
+    FOREIGN KEY (CPF_docente) REFERENCES docente_especialista(CPF_docente)
+        ON UPDATE CASCADE,
+    FOREIGN KEY (CPF_professor_isf) REFERENCES professor_isf(CPF_professor_isf)
+        ON UPDATE CASCADE
 );
 
 /* FIM */
