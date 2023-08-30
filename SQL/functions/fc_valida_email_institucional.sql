@@ -1,8 +1,6 @@
--- FUNÇÃO QUE VALIDA EMAIL INSTITUCIONAL PARA O FORMATO {}@{}.edu.br em maiúsculo ou minúsculo
+/*FUNÇÃO QUE VALIDA EMAIL INSTITUCIONAL PARA O FORMATO {}@{}.edu.br em maiúsculo ou minúsculo
+*/
 
-
--- Dropa a função
--- drop function valida_email_institucional;
 
 CREATE OR REPLACE FUNCTION valida_email_institucional(input_email VARCHAR)
 RETURNS BOOLEAN AS $$
@@ -19,5 +17,5 @@ SELECT valida_email_institucional('aaaa@edu.br');
 SELECT valida_email_institucional('aaaaa@ufscar.edu.br');
 SELECT valida_email_institucional('AAAAA@UFSCAR.EDU.BR');
 
-Resultado: FALSE, FALSE, FALSE, FALSE, TRUE
+Resultado: FALSE, FALSE, FALSE, FALSE, TRUE, TRUE
 */
