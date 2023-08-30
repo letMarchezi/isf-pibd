@@ -1,3 +1,15 @@
+-- DESCOMENTE AS 2 LINHAS ABAIXO PARA APAGAR TODO O SCHEMA E CRIAR NOVAMENTE 
+-- DROPA TODAS AS TABELAS
+--DROP SCHEMA public CASCADE;
+--CREATE SCHEMA public;
+
+
+CREATE TABLE IF NOT EXISTS email (
+	endereco_email VARCHAR(320) PRIMARY KEY,
+	tipo VARCHAR(50) -- isf, isf antigo, pessoal e gmail
+);
+
+
 CREATE TABLE IF NOT EXISTS cep_endereco (
     cep VARCHAR(8) NOT NULL PRIMARY KEY,
     rua VARCHAR(100),
@@ -51,6 +63,15 @@ CREATE TABLE IF NOT EXISTS usuario (
     FOREIGN KEY (cep_usuario) REFERENCES cep_endereco(cep),
     FOREIGN KEY (cnpj_ies_associada) REFERENCES ies(cnpj)
 );
+
+CREATE TABLE IF NOT EXISTS email_usuario(
+	email_usuario VARCHAR(320) PRIMARY KEY,
+	cpf_usuario VARCHAR(11),
+	
+ FOREIGN KEY (cpf_usuario) REFERENCES usuario(cpf),
+    FOREIGN KEY (email_usuario) REFERENCES email(endereco_email)
+);	
+
 
 CREATE TABLE IF NOT EXISTS telefone_usuario (
     cpf_usuario VARCHAR(14) NOT NULL,
@@ -280,11 +301,11 @@ CREATE TABLE IF NOT EXISTS proficiencia_idioma_componente(
 CREATE TABLE IF NOT EXISTS componente_curricular(
   nome_componente VARCHAR(100) NOT NULL,
   nome_idioma VARCHAR(50),
-  carga_horaria_pratica TIME,
-  carga_horaria_teorica TIME,
+  carga_horaria_pratica INTEGER,
+  carga_horaria_teorica INTEGER,
   obrigatoriedade BOOLEAN,
   eixo_tematico VARCHAR(50),
-  
+
   PRIMARY KEY (nome_componente),
   FOREIGN KEY (nome_idioma) REFERENCES proficiencia_idioma_componente(nome_idioma)
 );
@@ -394,7 +415,7 @@ CREATE TABLE IF NOT EXISTS curso_idioma(
     idioma VARCHAR(16) NOT NULL,
     nivel VARCHAR(16),
     categoria VARCHAR(16),
-    carga_horaria SMALLINT,
+    carga_horaria INTEGER,
     link_ementa VARCHAR(256),
 
     PRIMARY KEY (id_curso_idioma),
