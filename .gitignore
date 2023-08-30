@@ -1,2 +1,3 @@
 data
 .env
+dump_data.sql
