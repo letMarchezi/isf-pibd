@@ -1,3 +1,15 @@
+-- DESCOMENTE AS 2 LINHAS ABAIXO PARA APAGAR TODO O SCHEMA E CRIAR NOVAMENTE 
+-- DROPA TODAS AS TABELAS
+--DROP SCHEMA public CASCADE;
+--CREATE SCHEMA public;
+
+
+CREATE TABLE IF NOT EXISTS email (
+	endereco_email VARCHAR(320) PRIMARY KEY,
+	tipo VARCHAR(50) -- isf, isf antigo, pessoal e gmail
+);
+
+
 CREATE TABLE IF NOT EXISTS cep_endereco (
     cep VARCHAR(8) NOT NULL PRIMARY KEY,
     rua VARCHAR(100),
@@ -51,6 +63,15 @@ CREATE TABLE IF NOT EXISTS usuario (
     FOREIGN KEY (cep_usuario) REFERENCES cep_endereco(cep),
     FOREIGN KEY (cnpj_ies_associada) REFERENCES ies(cnpj)
 );
+
+CREATE TABLE IF NOT EXISTS email_usuario(
+	email_usuario VARCHAR(320) PRIMARY KEY,
+	cpf_usuario VARCHAR(11),
+	
+ FOREIGN KEY (cpf_usuario) REFERENCES usuario(cpf),
+    FOREIGN KEY (email_usuario) REFERENCES email(endereco_email)
+);	
+
 
 CREATE TABLE IF NOT EXISTS telefone_usuario (
     cpf_usuario VARCHAR(14) NOT NULL,
@@ -284,7 +305,7 @@ CREATE TABLE IF NOT EXISTS componente_curricular(
   carga_horaria_teorica TIME,
   obrigatoriedade BOOLEAN,
   eixo_tematico VARCHAR(50),
-  
+
   PRIMARY KEY (nome_componente),
   FOREIGN KEY (nome_idioma) REFERENCES proficiencia_idioma_componente(nome_idioma)
 );
