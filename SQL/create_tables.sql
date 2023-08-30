@@ -301,8 +301,8 @@ CREATE TABLE IF NOT EXISTS proficiencia_idioma_componente(
 CREATE TABLE IF NOT EXISTS componente_curricular(
   nome_componente VARCHAR(100) NOT NULL,
   nome_idioma VARCHAR(50),
-  carga_horaria_pratica TIME,
-  carga_horaria_teorica TIME,
+  carga_horaria_pratica INTEGER,
+  carga_horaria_teorica INTEGER,
   obrigatoriedade BOOLEAN,
   eixo_tematico VARCHAR(50),
 
@@ -415,7 +415,7 @@ CREATE TABLE IF NOT EXISTS curso_idioma(
     idioma VARCHAR(16) NOT NULL,
     nivel VARCHAR(16),
     categoria VARCHAR(16),
-    carga_horaria SMALLINT,
+    carga_horaria INTEGER,
     link_ementa VARCHAR(256),
 
     PRIMARY KEY (id_curso_idioma),
