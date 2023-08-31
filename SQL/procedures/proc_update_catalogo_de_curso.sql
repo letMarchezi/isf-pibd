@@ -30,7 +30,9 @@ CREATE OR REPLACE PROCEDURE update_catalogo_de_curso(
             
             FETCH curso_para_atualizar INTO curso_row;
             
-            IF FOUND THEN
+            IF NOT FOUND THEN
+                RAISE EXCEPTION 'Curso com nome % e idioma % não encontrado!', p_nome_completo, p_idioma;
+            ELSIF FOUND THEN
                 UPDATE public.curso_idioma 
                 SET 
                     nome_completo = p_nome_completo, 
@@ -42,4 +44,63 @@ CREATE OR REPLACE PROCEDURE update_catalogo_de_curso(
             END IF;
             
             CLOSE curso_para_atualizar;
-        END; $$
+        END;
+    $$;
+    
+   
+--TESTES
+/*
+
+INSERT INTO curso_idioma (
+    nome_completo, 
+    idioma, nivel, 
+    categoria, 
+    carga_horaria, 
+    link_ementa
+)
+VALUES (
+    'Batatinha', 
+    'Inglês', 
+    'A2', 
+    'Coletiva', 
+    69::smallint, 
+    'http://www.owo.com/ementa'
+);
+
+SELECT * FROM curso_idioma;
+
+--Teste de alteração com sucesso
+CALL update_catalogo_de_curso(
+    1,
+    'Potatinho', 
+    'Batatanês', 
+    'C3', 
+    'Local', 
+    621::smallint, 
+    'http://www.uwu.com/ementa'
+);
+
+--Chamando uma segunda vez, deve voltar mensagem de que ja existe esse curso
+CALL update_catalogo_de_curso(
+    1,
+    'Potatinho', 
+    'Batatanês', 
+    'C3', 
+    'Local', 
+    621::smallint, 
+    'http://www.uwu.com/ementa'
+);
+
+--Teste para mensagem de curso nao existe
+
+CALL update_catalogo_de_curso(
+    999999,
+    'EuNaoExiste', 
+    'NaoExistês', 
+    'C3', 
+    'Local', 
+    621::smallint, 
+    'http://www.uwu.com/ementa'
+); 
+
+*/
