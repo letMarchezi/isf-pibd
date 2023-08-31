@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS gestor_aprova_coord_adm (
 
 /* EDITAL */
 CREATE TABLE IF NOT EXISTS edital(
-    id_edital INTEGER,      
+    id_edital SERIAL,      
     numero DECIMAL(30) NOT NULL,
     ano DECIMAL(4) NOT NULL,
     semestre DECIMAL(1) NOT NULL,
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS edital(
 );
 
 CREATE TABLE IF NOT EXISTS edital_oferta_coletiva(
-    id_edital INTEGER,      
+    id_edital SERIAL,      
     max_alunos_turma  DECIMAL(4),
     max_alunos_lista_espera  DECIMAL(4),
     max_vagas_reservadas_turma DECIMAL(3),
@@ -201,21 +201,21 @@ CREATE TABLE IF NOT EXISTS idiomas_edital_oferta_coletiva(
 );
 
 CREATE TABLE IF NOT EXISTS edital_cred_especialista(
-    id_edital INTEGER,     
+    id_edital SERIAL,     
 
     PRIMARY KEY (id_edital),
     FOREIGN KEY (id_edital) REFERENCES edital(id_edital)
 );
 
 CREATE TABLE IF NOT EXISTS edital_cred_professor_isf(
-    id_edital INTEGER,      
+    id_edital SERIAL,      
 
     PRIMARY KEY (id_edital),
     FOREIGN KEY (id_edital) REFERENCES edital(id_edital)
 );
 
 CREATE TABLE IF NOT EXISTS edital_aluno_especializacao(
-    id_edital INTEGER,      
+    id_edital SERIAL,      
     quantidade_vagas DECIMAL(4),
 
     PRIMARY KEY (id_edital),
@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS aluno_especializacao_produz_repositorio(
 
 /* MATERIAIS */
 CREATE TABLE IF NOT EXISTS material(
-    id_material INTEGER,            
+    id_material SERIAL,            
     nome VARCHAR(50),
     data_criacao DATE,
     arquivo VARCHAR(256),
@@ -348,7 +348,7 @@ CREATE TABLE IF NOT EXISTS dependencias_componente_curricular(
 
 /* TURMA ESPECIALIZACAO */
 CREATE TABLE IF NOT EXISTS turma_especializacao(
-    id_turma_especializacao INTEGER,        
+    id_turma_especializacao SERIAL,        
     nome_componente VARCHAR(100) NOT NULL,
     sigla VARCHAR(15) NOT NULL,
     semestre DECIMAL(1) NOT NULL,
@@ -410,7 +410,7 @@ CREATE TABLE IF NOT EXISTS atividades_aluno_especializacao(
 );
 
 CREATE TABLE IF NOT EXISTS curso_idioma(
-    id_curso_idioma INTEGER,  
+    id_curso_idioma SERIAL,  
     nome_completo VARCHAR(256) NOT NULL,
     idioma VARCHAR(16) NOT NULL,
     nivel VARCHAR(16),
@@ -446,7 +446,7 @@ CREATE TABLE IF NOT EXISTS dias_turma_oferta_coletiva(
     id_turma_coletiva INTEGER,   
     dia_da_semana VARCHAR(3) NOT NULL,
 
-    PRIMARY KEY (id_turma_coletiva),
+    PRIMARY KEY (id_turma_coletiva, dia_da_semana),
     FOREIGN KEY (id_turma_coletiva) REFERENCES turma_oferta_coletiva(id_turma_coletiva)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT
@@ -525,7 +525,7 @@ CREATE TABLE IF NOT EXISTS idioma_aluno_oferta_coletiva (
 );
 
 CREATE TABLE IF NOT EXISTS aluno_inscreve_turma_oferta(
-    id_inscricao INTEGER,
+    id_inscricao SERIAL,
     id_turma_coletiva INTEGER,  
     cpf_aluno VARCHAR(11) NOT NULL,
     data_inscricao TIMESTAMP NOT NULL,
@@ -545,7 +545,7 @@ CREATE TABLE IF NOT EXISTS aluno_inscreve_turma_oferta(
 
 
 CREATE TABLE IF NOT EXISTS aluno_matricula_turma_oferta(
-    id_inscricao INTEGER,
+    id_inscricao SERIAL,
     data_matricula TIMESTAMP,
     situacao_matricula VARCHAR(20),
 
