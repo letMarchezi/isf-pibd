@@ -20,9 +20,9 @@ CREATE OR REPLACE PROCEDURE update_catalogo_de_curso(
             
             FETCH curso_ja_existe INTO curso_row;
             
-             IF FOUND THEN
+            IF FOUND THEN
                 RAISE EXCEPTION 'Curso com nome % e idioma % já existe!', p_nome_completo, p_idioma;
-             END IF;
+            END IF;
              
             CLOSE curso_ja_existe;
             
