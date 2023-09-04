@@ -1,10 +1,8 @@
-CREATE OR REPLACE PROCEDURE InsereCursista(cpf_aluno_especializacao_param VARCHAR(11),
-                                           titulacao_param VARCHAR(40),
+CREATE OR REPLACE PROCEDURE InsereCursista(titulacao_param VARCHAR(40),
                                            data_ingresso_param DATE,
                                            data_conclusao_param DATE,
                                            matricula_ativa_param BOOLEAN,
                                            diploma_file_param VARCHAR(255),
-                                           cpf_professor_isf_param VARCHAR(11),
                                            cpf_param VARCHAR(11),
                                            primeiro_nome_param VARCHAR(50),
                                            sobrenome_param VARCHAR(50),
@@ -39,8 +37,7 @@ BEGIN
 
     -- Insere o professor ISF
     INSERT INTO professor_isf (cpf_professor_isf)
-    VALUES (cpf_professor_isf_param); 
-
+    VALUES (cpf_param); 
 
     -- Insere vínculo do email do usuário com o cpf
     INSERT INTO email_usuario (email_usuario, cpf_usuario)
@@ -48,6 +45,6 @@ BEGIN
 
     -- Insere o aluno de especialização
     INSERT INTO aluno_especializacao (cpf_aluno_especializacao, titulacao, data_ingresso, data_conclusao, matricula_ativa, diploma_file)
-    VALUES (cpf_aluno_especializacao_param, titulacao_param, data_ingresso_param, data_conclusao_param, matricula_ativa_param, diploma_file_param);
+    VALUES (cpf_param, titulacao_param, data_ingresso_param, data_conclusao_param, matricula_ativa_param, diploma_file_param);
 END;
 $$
