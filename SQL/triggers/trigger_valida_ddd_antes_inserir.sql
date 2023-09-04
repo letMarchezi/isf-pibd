@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION ValidaDDDAntesInserir()
+CREATE OR REPLACE FUNCTION trigger_valida_ddd_antes_inserir()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.DDD !~ '^[0-9]{2}$' THEN
@@ -9,10 +9,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER CheckDDD
-BEFORE INSERT ON TelefoneIES
+CREATE TRIGGER check_ddd
+BEFORE INSERT ON telefone_ies
 FOR EACH ROW
-EXECUTE FUNCTION ValidaDDDAntesInserir();
+EXECUTE FUNCTION trigger_valida_DDD_antes_inserir();
 
 /*INSERT INTO TelefoneIES (CNPJ_IES, DDD, DDI, numero)
 VALUES ('your_cnpj_here', '11', '1', '123456789');

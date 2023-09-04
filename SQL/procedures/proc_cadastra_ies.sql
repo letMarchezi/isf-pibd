@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE CadastraIES(
+CREATE OR REPLACE PROCEDURE proc_cadastra_ies(
     p_CNPJ VARCHAR(14),
     p_sigla VARCHAR(10),
     p_participou_isf BOOLEAN,
@@ -20,12 +20,12 @@ AS
 $$
 BEGIN
     -- Insert into CepEndereco table
-    INSERT INTO CepEndereco (CEP, rua, bairro, cidade, estado, pais)
+    INSERT INTO cep_endereco (CEP, rua, bairro, cidade, estado, pais)
     VALUES (p_CEP_IES, NULL, NULL, NULL, NULL, NULL)
     ON CONFLICT (CEP) DO NOTHING;
 
     -- Insert into IES table
-    INSERT INTO IES (
+    INSERT INTO ies (
         CNPJ, sigla, participou_isf, tem_lab_mais_unidos, possui_nucleo_ativo,
         CEP_IES, numero, complemento, link_politica_ling, data_politica_ling,
         doc_politica_ling, campus, nome_principal
@@ -38,14 +38,14 @@ BEGIN
     ON CONFLICT (CNPJ) DO NOTHING;
 
     -- Insert into TelefoneIES table
-    INSERT INTO TelefoneIES (CNPJ_IES, DDD, DDI, numero)
+    INSERT INTO telefone_ies (CNPJ_IES, DDD, DDI, numero)
     VALUES (p_CNPJ, p_DDD, p_DDI, p_telefone)
     ON CONFLICT (CNPJ_IES, DDI, DDD, numero) DO NOTHING;
 END;
 $$ LANGUAGE plpgsql;
 
 
-/*CALL InsertIES(
+/*CALL proc_cadastra_ies(
     '12345678901234',    -- CNPJ
     'ABC Univ',          -- Sigla
     true,                -- Participou ISF
