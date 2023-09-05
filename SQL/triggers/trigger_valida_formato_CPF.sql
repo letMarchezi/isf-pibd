@@ -16,11 +16,11 @@ BEFORE INSERT ON usuario
 FOR EACH ROW
 EXECUTE FUNCTION validar_cpf();
 
-
+/*
 -- Tente inserir um registro com um CPF válido
 INSERT INTO usuario (cpf, primeiro_nome, sobrenome, genero, data_nascimento)
 VALUES ('12345678987', 'João', 'Silva', 'Masculino', '1990-01-01');
-
 -- Tente inserir um registro com um CPF inválido
 INSERT INTO usuario (cpf, primeiro_nome, sobrenome, genero, data_nascimento)
 VALUES ('12345', 'Maria', 'Santos', 'Feminino', '1985-02-15');
+*/
