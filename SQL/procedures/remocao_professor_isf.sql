@@ -1,6 +1,7 @@
-CREATE OR REPLACE FUNCTION remove_professor_isf(cpf_professor_isf VARCHAR)
-RETURNS VOID AS $$
+CREATE OR REPLACE PROCEDURE delete_professor(cpf_informado VARCHAR)
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DELETE FROM ProfessorIsf WHERE CPF_professor_isf = cpf_professor_isf;
+    DELETE FROM ProfessorIsf WHERE cpf = cpf_informado;
 END;
-$$ LANGUAGE plpgsql;
+$$
