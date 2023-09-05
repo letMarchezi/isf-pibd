@@ -2,17 +2,10 @@
 
 ## Inicialização da base de dados localmente com o docker
 
-- Instale o serviço do docker seguindo o script 
-
-  ```
-  setup.sh
-  ```
-- Com os serviços instalados, no diretorio em que se encontra o arquivo `docker-compose.yml` rode o comando
-
   ```bash
-  docker-compose up -d
+  docker build -t isf-pibd .
+  docker run -dp 127.0.0.1:5555:5432 isf-pibd
   ```
-- Com isso, será criado um server do postgres com a base de dados ISF-Dev na porta `5555`, e um pgadmin na porta `5050`
-- O PgAdmin pode ser acessado em `localhost:5050` com o email `admin@admin.com` e senha padrão `root`
-- A senha para o server é `root`
+- Com isso, será criado um server do postgres com a base de dados Isf que pode ser acessado na `5555`
+- A senha para o server é `docker` e o usuário é postgres
   
