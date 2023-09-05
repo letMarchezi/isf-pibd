@@ -5,6 +5,11 @@ CREATE OR REPLACE PROCEDURE proc_cadastra_ies(
     p_tem_lab_mais_unidos BOOLEAN,
     p_possui_nucleo_ativo BOOLEAN,
     p_CEP_IES VARCHAR(8),
+    p_rua VARCHAR(100),
+    p_bairro VARCHAR(50),
+    p_cidade VARCHAR(50),
+    p_estado VARCHAR(2),
+    p_pais VARCHAR(50),
     p_numero INTEGER,
     p_complemento VARCHAR(100),
     p_link_politica_ling VARCHAR(255),
@@ -21,8 +26,7 @@ $$
 BEGIN
     -- Insert into CepEndereco table
     INSERT INTO cep_endereco (CEP, rua, bairro, cidade, estado, pais)
-    VALUES (p_CEP_IES, NULL, NULL, NULL, NULL, NULL)
-    ON CONFLICT (CEP) DO NOTHING;
+    VALUES (p_CEP_IES, p_rua, p_bairro, p_cidade, p_estado, p_pais);
 
     -- Insert into IES table
     INSERT INTO ies (
@@ -34,24 +38,27 @@ BEGIN
         p_CNPJ, p_sigla, p_participou_isf, p_tem_lab_mais_unidos, p_possui_nucleo_ativo,
         p_CEP_IES, p_numero, p_complemento, p_link_politica_ling, p_data_politica_ling,
         p_doc_politica_ling, p_campus, p_nome_principal
-    )
-    ON CONFLICT (CNPJ) DO NOTHING;
+    );
 
     -- Insert into TelefoneIES table
     INSERT INTO telefone_ies (CNPJ_IES, DDD, DDI, numero)
-    VALUES (p_CNPJ, p_DDD, p_DDI, p_telefone)
-    ON CONFLICT (CNPJ_IES, DDI, DDD, numero) DO NOTHING;
+    VALUES (p_CNPJ, p_DDD, p_DDI, p_telefone);
 END;
 $$ LANGUAGE plpgsql;
 
 
 /*CALL proc_cadastra_ies(
-    '12345678901234',    -- CNPJ
+    '11111111111',    -- CNPJ
     'ABC Univ',          -- Sigla
     true,                -- Participou ISF
     false,               -- Tem Lab Mais Unidos
     true,                -- Possui Núcleo Ativo
     '12345678',          -- CEP
+    '123 Main St',         -- Rua
+    'Downtown',            -- Bairro
+    'Metropolis',          -- Cidade
+    'MP',                  -- Estado
+    'Country',              -- País
     42,                  -- Número
     'Sala 101',          -- Complemento
     'http://example.com/policy',  -- Link Política Ling
