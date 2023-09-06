@@ -77,7 +77,6 @@ CALL AdicionarDocenteAutor(
     '12345678901',
     'João',
     'Silva',
-    'Masculino',
     '1990-01-15',
     123,
     'Apto 301',
